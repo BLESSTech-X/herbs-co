@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herbs-Co — Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0a4d3a">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="shared.css">
+<script src="config.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+
+<!-- ─── LOGIN SCREEN ─────────────────────────────────────────────────── -->
+<div id="login-screen" style="display:none;">
+  <div class="login-wrap">
+    <div class="login-card">
+      <h2>Herbs-Co Admin</h2>
+      <p class="sub">Sign in to manage the landing page.</p>
+      <form id="login-form" novalidate>
+        <div class="field">
+          <label class="label" for="login-email">Email</label>
+          <input class="input" type="email" id="login-email" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label class="label" for="login-password">Password</label>
+          <input class="input" type="password" id="login-password" autocomplete="current-password" required>
+        </div>
+        <div class="err-msg" id="login-err"></div>
+        <button class="btn btn-green btn-full btn-lg mt-2" type="submit" id="login-submit">
+          <i class="fas fa-right-to-bracket" aria-hidden="true"></i>
+          Sign in
+        </button>
+      </form>
+      <p class="hint mt-2 text-center" style="margin-bottom:0;">
+        <a href="index.html">← Back to site</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ACCESS DENIED ────────────────────────────────────────────────── -->
+<div id="denied-screen" style="display:none;">
+  <div class="login-wrap">
+    <div class="login-card text-center">
+      <div style="font-size:2.4rem;color:var(--red);margin-bottom:12px;">
+        <i class="fas fa-ban" aria-hidden="true"></i>
+      </div>
+      <h2>Access denied</h2>
+      <p class="sub">This account does not have admin access.</p>
+      <button class="btn btn-outline btn-full" id="denied-signout" type="button">
+        Sign out
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ADMIN SHELL ──────────────────────────────────────────────────── -->
+<div id="admin-shell" class="admin-shell" style="display:none;">
+
+  <aside class="admin-side" id="admin-side">
+    <div class="brand">
+      <span class="nav-logo" aria-hidden="true">H</span>
+      <span>Herbs-Co CMS</span>
+    </div>
+    <nav class="admin-nav" id="admin-nav">
+      <button type="button" data-section="content" class="active">
+        <i class="fas fa-layer-group" aria-hidden="true"></i> Content
+      </button>
+      <button type="button" data-section="links">
+        <i class="fas fa-link" aria-hidden="true"></i> Links
+      </button>
+      <button type="button" data-section="settings">
+        <i class="fas fa-sliders" aria-hidden="true"></i> Settings
+      </button>
+      <button type="button" data-section="submissions">
+        <i class="fas fa-inbox" aria-hidden="true"></i> Submissions
+      </button>
+      <button type="button" data-section="analytics">
+        <i class="fas fa-chart-simple" aria-hidden="true"></i> Analytics
+      </button>
+      <button type="button" data-section="preview">
+        <i class="fas fa-eye" aria-hidden="true"></i> Preview
+      </button>
+      <div style="flex:1;"></div>
+      <button type="button" id="admin-logout">
+        <i class="fas fa-right-from-bracket" aria-hidden="true"></i> Log out
+      </button>
+    </nav>
+  </aside>
+
+  <main class="admin-main" id="admin-main">
+    <button class="admin-burger mb-2" id="admin-burger" type="button">
+      <i class="fas fa-bars" aria-hidden="true"></i> Menu
+    </button>
+
+    <!-- CONTENT SECTION -->
+    <section id="sec-content" class="admin-sec">
+      <div class="admin-hdr">
+        <div>
+          <h2>Content</h2>
+          <p class="muted" style="margin:0;font-size:.9rem;">Blocks displayed on the landing page.</p>
+        </div>
+        <button class="btn btn-primary" id="add-content-btn" type="button">
+          <i class="fas fa-plus" aria-hidden="true"></i> Add Content
+        </button>
+      </div>
+      <div id="content-list"></div>
+    </section>
+
+    <!-- LINKS SECTION -->
+    <section id="sec-links" class="admin-sec" style="display:none;">
+      <div class="admin-hdr">
+        <div>
+          <h2>Contact Links</h2>
+          <p class="muted" style="margin:0;font-size:.9rem;">WhatsApp, phone, email, socials.</p>
+        </div>
+        <button class="btn btn-primary" id="add-link-btn" type="button">
+          <i class="fas fa-plus" aria-hidden="true"></i> Add Link
+        </button>
+      </div>
+      <div id="links-list"></div>
+    </section>
+
+    <!-- SETTINGS SECTION -->
+    <section id="sec-settings" class="admin-sec" style="display:none;">
+      <div class="admin-hdr">
+        <h2>Settings</h2>
+      </div>
+      <div class="card" style="max-width:640px;">
+        <form id="settings-form">
+          <div class="field">
+            <label class="label" for="set-brand">Brand name</label>
+            <input class="input" type="text" id="set-brand" placeholder="Herbs-Co">
+          </div>
+          <div class="field">
+            <label class="label" for="set-tagline">Tagline</label>
+            <input class="input" type="text" id="set-tagline" placeholder="Wellness that pays.">
+          </div>
+          <div class="field">
+            <label class="label" for="set-wa">WhatsApp number (digits only, incl. country code)</label>
+            <input class="input" type="text" id="set-wa" placeholder="260979603741">
+            <div class="hint">Example: 260979603741 for a +260 97 960 3741 Zambian number.</div>
+          </div>
+          <div class="field">
+            <label class="label" for="set-group">WhatsApp group invite URL</label>
+            <input class="input" type="url" id="set-group" placeholder="https://chat.whatsapp.com/...">
+          </div>
+          <div class="field">
+            <label class="label" for="set-hero">Hero headline</label>
+            <input class="input" type="text" id="set-hero" placeholder="Wellness that pays.">
+          </div>
+          <div class="field">
+            <label class="label" for="set-hero-sub">Hero sub-headline</label>
+            <textarea class="textarea" id="set-hero-sub" placeholder="Short intro line."></textarea>
+          </div>
+          <div class="field">
+            <label class="label" for="set-site">Site URL</label>
+            <input class="input" type="url" id="set-site" placeholder="https://herbs-co.vercel.app">
+          </div>
+          <div class="field">
+            <label class="label" for="set-logo">Logo URL</label>
+            <input class="input" type="url" id="set-logo" placeholder="https://.../logo.png">
+            <div class="hint">Leave blank to use the brand letter mark.</div>
+          </div>
+          <div class="field">
+            <label class="label" for="set-city">City / region</label>
+            <input class="input" type="text" id="set-city" placeholder="Lusaka, Zambia">
+          </div>
+          <button class="btn btn-green btn-full btn-lg" type="submit" id="settings-save">
+            <i class="fas fa-check" aria-hidden="true"></i> Save settings
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- SUBMISSIONS SECTION -->
+    <section id="sec-submissions" class="admin-sec" style="display:none;">
+      <div class="admin-hdr">
+        <div>
+          <h2>Submissions</h2>
+          <p class="muted" style="margin:0;font-size:.9rem;">Join requests and contact messages.</p>
+        </div>
+        <div class="flex gap-2" style="flex-wrap:wrap;">
+          <button class="btn btn-outline btn-sm" id="subs-export-csv" type="button">
+            <i class="fas fa-file-csv" aria-hidden="true"></i> CSV
+          </button>
+          <button class="btn btn-outline btn-sm" id="subs-export-pdf" type="button">
+            <i class="fas fa-file-pdf" aria-hidden="true"></i> PDF
+          </button>
+          <button class="btn btn-outline btn-sm" id="subs-purge" type="button">
+            <i class="fas fa-trash" aria-hidden="true"></i> Purge &gt;90d
+          </button>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mb-2" style="flex-wrap:wrap;">
+        <select class="select" id="subs-filter-type" style="max-width:180px;">
+          <option value="">All types</option>
+          <option value="join">Join</option>
+          <option value="contact">Contact</option>
+        </select>
+        <select class="select" id="subs-filter-handled" style="max-width:180px;">
+          <option value="">All</option>
+          <option value="false">Unhandled</option>
+          <option value="true">Handled</option>
+        </select>
+        <button class="btn btn-outline btn-sm" id="subs-refresh" type="button">
+          <i class="fas fa-rotate" aria-hidden="true"></i> Refresh
+        </button>
+      </div>
+
+      <div id="subs-list"></div>
+    </section>
+
+    <!-- ANALYTICS SECTION -->
+    <section id="sec-analytics" class="admin-sec" style="display:none;">
+      <div class="admin-hdr">
+        <div>
+          <h2>Analytics</h2>
+          <p class="muted" style="margin:0;font-size:.9rem;">Last 30 days.</p>
+        </div>
+        <div class="flex gap-2">
+          <select class="select" id="ana-range" style="max-width:140px;">
+            <option value="7">7 days</option>
+            <option value="30" selected>30 days</option>
+          </select>
+          <button class="btn btn-outline btn-sm" id="ana-refresh" type="button">
+            <i class="fas fa-rotate" aria-hidden="true"></i> Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="card mb-2" style="max-width:860px;">
+        <h3 style="margin-top:0;">Link clicks</h3>
+        <div id="ana-clicks"></div>
+      </div>
+
+      <div class="card" style="max-width:860px;">
+        <h3 style="margin-top:0;">Form submissions per day</h3>
+        <div id="ana-subs"></div>
+      </div>
+    </section>
+
+    <!-- PREVIEW SECTION -->
+    <section id="sec-preview" class="admin-sec" style="display:none;">
+      <div class="admin-hdr">
+        <h2>Preview</h2>
+      </div>
+      <div class="card" style="max-width:560px;">
+        <p>Open the public landing page in a new tab to see your changes live.</p>
+        <a class="btn btn-green btn-lg" href="index.html" target="_blank" rel="noopener">
+          <i class="fas fa-up-right-from-square" aria-hidden="true"></i> Open live page
+        </a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ─── GENERIC EDIT MODAL ───────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <span id="modal-title">Edit</span>
+      <button class="modal-close" id="modal-close" type="button" aria-label="Close">
+        <i class="fas fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================================
+   admin.html — CMS controller
+   ============================================================================ */
+(function () {
+  'use strict';
+
+  const $ = (id) => document.getElementById(id);
+  const on = (el, ev, fn) => el && el.addEventListener(ev, fn);
+  const show = (el) => { if (el) el.style.display = ''; };
+  const hide = (el) => { if (el) el.style.display = 'none'; };
+
+  let CURRENT_USER_IS_ADMIN = false;
+  let CURRENT_SECTION = 'content';
+  let CACHED_CONTENT = [];
+  let CACHED_LINKS = [];
+  let CACHED_SETTINGS = {};
+
+  /* ─── boot ───────────────────────────────────────────────────────────── */
+  (async function boot() {
+    if (!auth.isLoggedIn()) {
+      show($('login-screen'));
+      return;
+    }
+    const ok = await checkAdmin();
+    if (!ok) return;
+  })();
+
+  async function checkAdmin() {
+    const profile = await getProfile();
+    if (!profile || profile.role !== 'admin') {
+      hide($('login-screen'));
+      show($('denied-screen'));
+      return false;
+    }
+    CURRENT_USER_IS_ADMIN = true;
+    hide($('login-screen'));
+    hide($('denied-screen'));
+    show($('admin-shell'));
+    await loadAll();
+    switchSection('content');
+    return true;
+  }
+
+  /* ─── login ──────────────────────────────────────────────────────────── */
+  on($('login-form'), 'submit', async (e) => {
+    e.preventDefault();
+    const email = $('login-email').value.trim();
+    const password = $('login-password').value;
+    const errEl = $('login-err');
+    const btn = $('login-submit');
+    errEl.textContent = '';
+    if (!email || !password) {
+      errEl.textContent = 'Enter your email and password.';
+      return;
+    }
+    setLoading(btn, true, 'Signing in…');
+    try {
+      await auth.signIn(email, password);
+      const ok = await checkAdmin();
+      if (!ok) setLoading(btn, false);
+    } catch (err) {
+      errEl.textContent = err.message || 'Sign in failed.';
+      setLoading(btn, false);
+    }
+  });
+
+  on($('denied-signout'), 'click', async () => {
+    await auth.signOut();
+    location.reload();
+  });
+
+  on($('admin-logout'), 'click', async () => {
+    await auth.signOut();
+    location.reload();
+  });
+
+  /* ─── nav ────────────────────────────────────────────────────────────── */
+  on($('admin-burger'), 'click', () => {
+    $('admin-side').classList.toggle('closed');
+  });
+
+  document.querySelectorAll('#admin-nav button[data-section]').forEach(btn => {
+    on(btn, 'click', () => {
+      switchSection(btn.getAttribute('data-section'));
+      if (window.innerWidth <= 900) $('admin-side').classList.add('closed');
+    });
+  });
+
+  function switchSection(name) {
+    CURRENT_SECTION = name;
+    document.querySelectorAll('#admin-nav button[data-section]').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-section') === name);
+    });
+    ['content', 'links', 'settings', 'submissions', 'analytics', 'preview'].forEach(s => {
+      const el = $('sec-' + s);
+      if (el) el.style.display = s === name ? '' : 'none';
+    });
+    if (name === 'content') renderContent();
+    if (name === 'links') renderLinks();
+    if (name === 'settings') renderSettings();
+    if (name === 'submissions') renderSubmissions();
+    if (name === 'analytics') renderAnalytics();
+  }
+
+  /* ─── load all ───────────────────────────────────────────────────────── */
+  async function loadAll() {
+    try {
+      const [content, links, settings] = await Promise.all([
+        db.query('content', { order: 'section.asc,sort_order.asc' }),
+        db.query('contact_links', { order: 'sort_order.asc' }),
+        db.query('site_settings', { select: 'key,value' }),
+      ]);
+      CACHED_CONTENT = content || [];
+      CACHED_LINKS = links || [];
+      const settingsObj = {};
+      (settings || []).forEach(r => { settingsObj[r.key] = r.value; });
+      CACHED_SETTINGS = settingsObj;
+    } catch (e) {
+      toast('Failed to load data: ' + e.message);
+    }
+  }
+
+  /* ─── CONTENT ────────────────────────────────────────────────────────── */
+  const SECTION_LABELS = {
+    hero:        'Hero',
+    about:       'About',
+    video:       'Video',
+    image:       'Gallery Image',
+    product:     'Product',
+    step:        'Step',
+    testimonial: 'Testimonial',
+    faq:         'FAQ',
+  };
+
+  function renderContent() {
+    const wrap = $('content-list');
+    if (!CACHED_CONTENT.length) {
+      wrap.innerHTML = `<div class="empty">
+        <div class="empty-icon"><i class="fas fa-layer-group" aria-hidden="true"></i></div>
+        <p>No content yet. Click "Add Content" to create your first block.</p>
+      </div>`;
+      return;
+    }
+    // Group by section, in the order of SECTION_LABELS keys.
+    const groups = {};
+    CACHED_CONTENT.forEach(row => {
+      const s = row.section || 'misc';
+      if (!groups[s]) groups[s] = [];
+      groups[s].push(row);
+    });
+    const order = Object.keys(SECTION_LABELS);
+    const html = order
+      .filter(s => groups[s] && groups[s].length)
+      .map(s => {
+        const rows = groups[s].slice().sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+        return `
+          <div class="card mb-2">
+            <h3 style="margin-top:0;">${esc(SECTION_LABELS[s] || s)} <span class="muted" style="font-weight:400;font-size:.85rem;">(${rows.length})</span></h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr>
+                  <th style="width:60px;">Order</th>
+                  <th>Title</th>
+                  <th>Preview</th>
+                  <th style="width:80px;">Active</th>
+                  <th style="width:140px;"></th>
+                </tr></thead>
+                <tbody>
+                  ${rows.map(rowHtml).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+      }).join('');
+
+    wrap.innerHTML = html || `<div class="empty"><p>No content yet.</p></div>`;
+
+    wrap.querySelectorAll('[data-act="edit-content"]').forEach(b => {
+      on(b, 'click', () => openContentModal(b.getAttribute('data-id')));
+    });
+    wrap.querySelectorAll('[data-act="del-content"]').forEach(b => {
+      on(b, 'click', () => deleteContent(b.getAttribute('data-id')));
+    });
+    wrap.querySelectorAll('[data-act="toggle-content"]').forEach(b => {
+      on(b, 'click', () => toggleContent(b.getAttribute('data-id')));
+    });
+  }
+
+  function rowHtml(row) {
+    const isImg = row.media_type === 'image' && row.media_url;
+    const isVid = row.media_type === 'video' && row.media_url;
+    let preview = '<span class="muted">—</span>';
+    if (isImg) preview = `<img src="${esc(row.media_url)}" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:6px;">`;
+    else if (isVid) preview = `<span class="pill pill-active"><i class="fas fa-video" aria-hidden="true"></i> Video</span>`;
+    else if (row.body) preview = `<span class="muted">${esc(String(row.body).slice(0, 60))}${row.body.length > 60 ? '…' : ''}</span>`;
+
+    return `<tr>
+      <td>${esc(String(row.sort_order || 0))}</td>
+      <td><strong>${esc(row.title || '—')}</strong></td>
+      <td>${preview}</td>
+      <td>
+        <button class="btn btn-ghost btn-sm" data-act="toggle-content" data-id="${esc(row.id)}" aria-label="Toggle active">
+          <span class="pill ${row.active ? 'pill-active' : 'pill-inactive'}">${row.active ? 'Active' : 'Hidden'}</span>
+        </button>
+      </td>
+      <td>
+        <button class="btn btn-outline btn-sm" data-act="edit-content" data-id="${esc(row.id)}">
+          <i class="fas fa-pen" aria-hidden="true"></i> Edit
+        </button>
+        <button class="btn btn-ghost btn-sm" data-act="del-content" data-id="${esc(row.id)}" aria-label="Delete">
+          <i class="fas fa-trash" aria-hidden="true" style="color:var(--red);"></i>
+        </button>
+      </td>
+    </tr>`;
+  }
+
+  on($('add-content-btn'), 'click', () => openContentModal(null));
+
+  function openContentModal(id) {
+    const isNew = !id;
+    const row = isNew ? {
+      section: 'product', title: '', body: '', media_url: '', media_type: '',
+      sort_order: 0, active: true,
+    } : CACHED_CONTENT.find(r => String(r.id) === String(id));
+    if (!row) return;
+
+    $('modal-title').textContent = isNew ? 'Add Content' : 'Edit Content';
+    $('modal-body').innerHTML = `
+      <form id="content-form">
+        <div class="field">
+          <label class="label" for="cf-section">Section <span class="req">*</span></label>
+          <select class="select" id="cf-section" required>
+            ${Object.entries(SECTION_LABELS).map(([k, v]) =>
+              `<option value="${esc(k)}" ${row.section === k ? 'selected' : ''}>${esc(v)}</option>`
+            ).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label class="label" for="cf-title">Title</label>
+          <input class="input" type="text" id="cf-title" value="${esc(row.title || '')}">
+          <div class="hint" id="cf-title-hint">For testimonials use "Name | Role". For FAQ this is the question.</div>
+        </div>
+        <div class="field">
+          <label class="label" for="cf-body">Body</label>
+          <textarea class="textarea" id="cf-body">${esc(row.body || '')}</textarea>
+        </div>
+        <div class="field">
+          <label class="label" for="cf-media-url">Media URL</label>
+          <input class="input" type="url" id="cf-media-url" value="${esc(row.media_url || '')}" placeholder="https://... or YouTube link">
+          <div class="hint">Paste a YouTube link, an image URL, or an MP4 link. Or upload below.</div>
+        </div>
+        <div class="field">
+          <label class="label">Upload</label>
+          <div class="flex gap-2" style="flex-wrap:wrap;">
+            <input type="file" id="cf-file" accept="image/*,video/mp4" style="display:none;">
+            <button class="btn btn-outline btn-sm" type="button" id="cf-pick">
+              <i class="fas fa-upload" aria-hidden="true"></i> Choose file
+            </button>
+            <span class="muted" id="cf-file-name" style="align-self:center;font-size:.85rem;">No file selected</span>
+          </div>
+          <div class="hint">Images go to <code>content-images</code>, MP4 to <code>content-videos</code>. Prefer YouTube links for large videos.</div>
+        </div>
+        <div class="field">
+          <label class="label" for="cf-sort">Sort order</label>
+          <input class="input" type="number" id="cf-sort" value="${esc(String(row.sort_order || 0))}" min="0">
+          <div class="hint">Lower numbers appear first within their section.</div>
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="cf-active" ${row.active ? 'checked' : ''}>
+          <label for="cf-active">Active (visible on site)</label>
+        </div>
+        <div class="flex gap-2 mt-2" style="justify-content:flex-end;">
+          <button class="btn btn-ghost" type="button" id="cf-cancel">Cancel</button>
+          <button class="btn btn-green" type="submit" id="cf-save">
+            <i class="fas fa-check" aria-hidden="true"></i> Save
+          </button>
+        </div>
+      </form>`;
+
+    openModal();
+
+    let pickedFile = null;
+    on($('cf-pick'), 'click', () => $('cf-file').click());
+    on($('cf-file'), 'change', (e) => {
+      pickedFile = e.target.files[0] || null;
+      $('cf-file-name').textContent = pickedFile ? pickedFile.name : 'No file selected';
+    });
+    on($('cf-cancel'), 'click', closeModal);
+    on($('content-form'), 'submit', async (e) => {
+      e.preventDefault();
+      const btn = $('cf-save');
+      const payload = {
+        section:    $('cf-section').value,
+        title:      $('cf-title').value.trim() || null,
+        body:       $('cf-body').value.trim() || null,
+        media_url:  $('cf-media-url').value.trim() || null,
+        media_type: null,
+        sort_order: Number($('cf-sort').value || 0),
+        active:     $('cf-active').checked,
+      };
+
+      // Infer media_type from URL or uploaded file.
+      if (pickedFile) {
+        try {
+          setLoading(btn, true, 'Uploading…');
+          if (pickedFile.type.startsWith('image/')) {
+            payload.media_url = await uploadContentImage(pickedFile);
+            payload.media_type = 'image';
+          } else if (pickedFile.type === 'video/mp4') {
+            payload.media_url = await uploadContentVideo(pickedFile);
+            payload.media_type = 'video';
+          } else {
+            throw new Error('Unsupported file type');
+          }
+        } catch (err) {
+          toast(err.message || 'Upload failed');
+          setLoading(btn, false);
+          return;
+        }
+      } else if (payload.media_url) {
+        if (/youtube\.com|youtu\.be/i.test(payload.media_url)) payload.media_type = 'video';
+        else if (/\.mp4(\?|$)/i.test(payload.media_url)) payload.media_type = 'video';
+        else payload.media_type = 'image';
+      }
+
+      setLoading(btn, true, 'Saving…');
+      try {
+        if (isNew) {
+          await db.insert('content', payload);
+        } else {
+          await db.update('content', { eq: { id: row.id } }, payload);
+        }
+        toast('Saved');
+        closeModal();
+        await loadAll();
+        renderContent();
+      } catch (err) {
+        toast(err.message || 'Save failed');
+        setLoading(btn, false);
+      }
+    });
+  }
+
+  async function deleteContent(id) {
+    if (!confirm('Delete this content block? This cannot be undone.')) return;
+    try {
+      await db.remove('content', { eq: { id } });
+      toast('Deleted');
+      await loadAll();
+      renderContent();
+    } catch (e) {
+      toast(e.message || 'Delete failed');
+    }
+  }
+
+  async function toggleContent(id) {
+    const row = CACHED_CONTENT.find(r => String(r.id) === String(id));
+    if (!row) return;
+    try {
+      await db.update('content', { eq: { id } }, { active: !row.active });
+      await loadAll();
+      renderContent();
+    } catch (e) {
+      toast(e.message || 'Update failed');
+    }
+  }
+
+  /* ─── LINKS ──────────────────────────────────────────────────────────── */
+  const DEFAULT_LINK_KEYS = ['whatsapp', 'group', 'email', 'phone', 'facebook', 'tiktok', 'instagram'];
+
+  function renderLinks() {
+    const wrap = $('links-list');
+    if (!CACHED_LINKS.length) {
+      wrap.innerHTML = `<div class="empty">
+        <div class="empty-icon"><i class="fas fa-link" aria-hidden="true"></i></div>
+        <p>No links yet. Click "Add Link".</p>
+      </div>`;
+      return;
+    }
+    wrap.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Key</th>
+            <th>Label</th>
+            <th>Value</th>
+            <th style="width:80px;">Order</th>
+            <th style="width:80px;">Active</th>
+            <th style="width:150px;"></th>
+          </tr></thead>
+          <tbody>
+            ${CACHED_LINKS.map(l => `
+              <tr>
+                <td><code>${esc(l.key || '')}</code></td>
+                <td>${esc(l.label || '')}</td>
+                <td style="max-width:260px;word-break:break-all;">${esc(l.value || '')}</td>
+                <td>${esc(String(l.sort_order || 0))}</td>
+                <td>
+                  <button class="btn btn-ghost btn-sm" data-act="toggle-link" data-id="${esc(l.id)}">
+                    <span class="pill ${l.active ? 'pill-active' : 'pill-inactive'}">${l.active ? 'Active' : 'Hidden'}</span>
+                  </button>
+                </td>
+                <td>
+                  <button class="btn btn-outline btn-sm" data-act="edit-link" data-id="${esc(l.id)}">
+                    <i class="fas fa-pen" aria-hidden="true"></i>
+                  </button>
+                  <button class="btn btn-ghost btn-sm" data-act="del-link" data-id="${esc(l.id)}" aria-label="Delete">
+                    <i class="fas fa-trash" aria-hidden="true" style="color:var(--red);"></i>
+                  </button>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+
+    wrap.querySelectorAll('[data-act="edit-link"]').forEach(b => {
+      on(b, 'click', () => openLinkModal(b.getAttribute('data-id')));
+    });
+    wrap.querySelectorAll('[data-act="del-link"]').forEach(b => {
+      on(b, 'click', () => deleteLink(b.getAttribute('data-id')));
+    });
+    wrap.querySelectorAll('[data-act="toggle-link"]').forEach(b => {
+      on(b, 'click', () => toggleLink(b.getAttribute('data-id')));
+    });
+  }
+
+  on($('add-link-btn'), 'click', () => openLinkModal(null));
+
+  function openLinkModal(id) {
+    const isNew = !id;
+    const row = isNew ? {
+      key: '', label: '', value: '', icon: '', active: true, sort_order: 0,
+    } : CACHED_LINKS.find(l => String(l.id) === String(id));
+    if (!row) return;
+
+    $('modal-title').textContent = isNew ? 'Add Link' : 'Edit Link';
+    $('modal-body').innerHTML = `
+      <form id="link-form">
+        <div class="field">
+          <label class="label" for="lf-key">Key <span class="req">*</span></label>
+          <input class="input" type="text" id="lf-key" value="${esc(row.key || '')}" ${isNew ? '' : 'readonly'} required>
+          <div class="hint">Short identifier, e.g. <code>whatsapp</code>, <code>group</code>, <code>email</code>, <code>phone</code>, <code>facebook</code>. Cannot be changed later.</div>
+        </div>
+        <div class="field">
+          <label class="label" for="lf-label">Label</label>
+          <input class="input" type="text" id="lf-label" value="${esc(row.label || '')}" placeholder="Chat on WhatsApp">
+        </div>
+        <div class="field">
+          <label class="label" for="lf-value">Value <span class="req">*</span></label>
+          <input class="input" type="text" id="lf-value" value="${esc(row.value || '')}" placeholder="260979603741 or https://..." required>
+        </div>
+        <div class="field">
+          <label class="label" for="lf-icon">Icon (optional)</label>
+          <input class="input" type="text" id="lf-icon" value="${esc(row.icon || '')}" placeholder="fab fa-whatsapp">
+          <div class="hint">Any Font Awesome class. Leave blank to auto-detect from key.</div>
+        </div>
+        <div class="field">
+          <label class="label" for="lf-sort">Sort order</label>
+          <input class="input" type="number" id="lf-sort" value="${esc(String(row.sort_order || 0))}" min="0">
+        </div>
+        <div class="checkbox-row">
+          <input type="checkbox" id="lf-active" ${row.active ? 'checked' : ''}>
+          <label for="lf-active">Active</label>
+        </div>
+        <div class="flex gap-2 mt-2" style="justify-content:flex-end;">
+          <button class="btn btn-ghost" type="button" id="lf-cancel">Cancel</button>
+          <button class="btn btn-green" type="submit" id="lf-save">
+            <i class="fas fa-check" aria-hidden="true"></i> Save
+          </button>
+        </div>
+      </form>`;
+
+    openModal();
+    on($('lf-cancel'), 'click', closeModal);
+    on($('link-form'), 'submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        key:        $('lf-key').value.trim(),
+        label:      $('lf-label').value.trim() || null,
+        value:      $('lf-value').value.trim(),
+        icon:       $('lf-icon').value.trim() || null,
+        sort_order: Number($('lf-sort').value || 0),
+        active:     $('lf-active').checked,
+      };
+      if (!payload.key || !payload.value) {
+        toast('Key and value are required.');
+        return;
+      }
+      const btn = $('lf-save');
+      setLoading(btn, true, 'Saving…');
+      try {
+        if (isNew) await db.insert('contact_links', payload);
+        else {
+          const { key, ...rest } = payload;
+          await db.update('contact_links', { eq: { id: row.id } }, rest);
+        }
+        toast('Saved');
+        closeModal();
+        await loadAll();
+        renderLinks();
+      } catch (err) {
+        toast(err.message || 'Save failed');
+        setLoading(btn, false);
+      }
+    });
+  }
+
+  async function deleteLink(id) {
+    if (!confirm('Delete this link?')) return;
+    try {
+      await db.remove('contact_links', { eq: { id } });
+      toast('Deleted');
+      await loadAll();
+      renderLinks();
+    } catch (e) {
+      toast(e.message || 'Delete failed');
+    }
+  }
+
+  async function toggleLink(id) {
+    const row = CACHED_LINKS.find(l => String(l.id) === String(id));
+    if (!row) return;
+    try {
+      await db.update('contact_links', { eq: { id } }, { active: !row.active });
+      await loadAll();
+      renderLinks();
+    } catch (e) {
+      toast(e.message || 'Update failed');
+    }
+  }
+
+  /* ─── SETTINGS ───────────────────────────────────────────────────────── */
+  function renderSettings() {
+    const s = CACHED_SETTINGS || {};
+    const map = {
+      'set-brand':    s.brand_name,
+      'set-tagline':  s.tagline,
+      'set-wa':       s.wa_number,
+      'set-group':    s.group_invite_url,
+      'set-hero':     s.hero_headline,
+      'set-hero-sub': s.hero_sub,
+      'set-site':     s.site_url,
+      'set-logo':     s.logo_url,
+      'set-city':     s.city,
+    };
+    Object.entries(map).forEach(([id, val]) => {
+      const el = $(id);
+      if (el && val != null) el.value = val;
+    });
+  }
+
+  on($('settings-form'), 'submit', async (e) => {
+    e.preventDefault();
+    const btn = $('settings-save');
+    const pairs = [
+      ['brand_name',        $('set-brand').value.trim()],
+      ['tagline',           $('set-tagline').value.trim()],
+      ['wa_number',         $('set-wa').value.trim()],
+      ['group_invite_url',  $('set-group').value.trim()],
+      ['hero_headline',     $('set-hero').value.trim()],
+      ['hero_sub',          $('set-hero-sub').value.trim()],
+      ['site_url',          $('set-site').value.trim()],
+      ['logo_url',          $('set-logo').value.trim()],
+      ['city',              $('set-city').value.trim()],
+    ];
+    setLoading(btn, true, 'Saving…');
+    try {
+      // Upsert each key. Try update first; if no rows, insert.
+      for (const [key, value] of pairs) {
+        const existing = await db.getOne('site_settings', { eq: { key } });
+        if (existing) {
+          await db.update('site_settings', { eq: { key } }, { value });
+        } else {
+          await db.insert('site_settings', { key, value });
+        }
+      }
+      toast('Settings saved');
+      await loadAll();
+      renderSettings();
+    } catch (err) {
+      toast(err.message || 'Save failed');
+    }
+    setLoading(btn, false);
+  });
+
+  /* ─── SUBMISSIONS ────────────────────────────────────────────────────── */
+  let CACHED_SUBS = [];
+
+  async function renderSubmissions() {
+    const wrap = $('subs-list');
+    wrap.innerHTML = `<div class="empty"><div class="spinner" style="border-color:var(--border);border-top-color:var(--green);width:24px;height:24px;"></div></div>`;
+    try {
+      const filter = {};
+      const type = $('subs-filter-type').value;
+      const handled = $('subs-filter-handled').value;
+      if (type) filter.eq = { ...(filter.eq || {}), form_type: type };
+      if (handled === 'true' || handled === 'false') {
+        filter.eq = { ...(filter.eq || {}), handled: handled === 'true' };
+      }
+      CACHED_SUBS = await db.query('form_submissions', {
+        ...filter,
+        order: 'created_at.desc',
+        limit: 500,
+      }) || [];
+      drawSubs();
+    } catch (e) {
+      wrap.innerHTML = `<div class="empty"><p>Failed to load: ${esc(e.message)}</p></div>`;
+    }
+  }
+
+  function drawSubs() {
+    const wrap = $('subs-list');
+    if (!CACHED_SUBS.length) {
+      wrap.innerHTML = `<div class="empty">
+        <div class="empty-icon"><i class="fas fa-inbox" aria-hidden="true"></i></div>
+        <p>No submissions match these filters.</p>
+      </div>`;
+      return;
+    }
+    wrap.innerHTML = `
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Type</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Message</th>
+            <th style="width:140px;">Date</th>
+            <th style="width:100px;">Status</th>
+            <th style="width:100px;"></th>
+          </tr></thead>
+          <tbody>
+            ${CACHED_SUBS.map(s => `
+              <tr>
+                <td><span class="pill ${s.form_type === 'join' ? 'pill-active' : 'pill-inactive'}">${esc(s.form_type || '—')}</span></td>
+                <td>${esc(s.name || '—')}</td>
+                <td>
+                  ${s.phone ? `<div>${esc(s.phone)}</div>` : ''}
+                  ${s.email ? `<div class="muted" style="font-size:.8rem;">${esc(s.email)}</div>` : ''}
+                </td>
+                <td style="max-width:280px;">${esc(String(s.message || '').slice(0, 120))}${(s.message || '').length > 120 ? '…' : ''}</td>
+                <td>${esc(fmtDateTime(s.created_at))}</td>
+                <td><span class="pill ${s.handled ? 'pill-active' : 'pill-inactive'}">${s.handled ? 'Handled' : 'New'}</span></td>
+                <td>
+                  <button class="btn btn-outline btn-sm" data-act="view-sub" data-id="${esc(s.id)}">
+                    <i class="fas fa-eye" aria-hidden="true"></i>
+                  </button>
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+
+    wrap.querySelectorAll('[data-act="view-sub"]').forEach(b => {
+      on(b, 'click', () => openSubModal(b.getAttribute('data-id')));
+    });
+  }
+
+  ['subs-filter-type', 'subs-filter-handled'].forEach(id => {
+    on($(id), 'change', renderSubmissions);
+  });
+  on($('subs-refresh'), 'click', renderSubmissions);
+
+  function openSubModal(id) {
+    const sub = CACHED_SUBS.find(s => String(s.id) === String(id));
+    if (!sub) return;
+    $('modal-title').textContent = 'Submission';
+    $('modal-body').innerHTML = `
+      <div class="field">
+        <span class="label">Type</span>
+        <div><span class="pill ${sub.form_type === 'join' ? 'pill-active' : 'pill-inactive'}">${esc(sub.form_type || '—')}</span></div>
+      </div>
+      <div class="field"><span class="label">Name</span><div>${esc(sub.name || '—')}</div></div>
+      <div class="field"><span class="label">Phone</span><div>${esc(sub.phone || '—')}</div></div>
+      <div class="field"><span class="label">Email</span><div>${esc(sub.email || '—')}</div></div>
+      <div class="field">
+        <span class="label">Message</span>
+        <div style="white-space:pre-wrap;background:var(--light);padding:12px;border-radius:var(--r);">${esc(sub.message || '—')}</div>
+      </div>
+      <div class="field"><span class="label">Received</span><div>${esc(fmtDateTime(sub.created_at))}</div></div>
+      <div class="flex gap-2 mt-2" style="justify-content:space-between;flex-wrap:wrap;">
+        <div class="flex gap-2" style="flex-wrap:wrap;">
+          ${sub.phone ? `<a class="btn btn-whatsapp btn-sm" href="${esc(waLink(sub.phone, `Hi ${sub.name || ''}, this is ${CONFIG.brandName}.`))}" target="_blank" rel="noopener"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>` : ''}
+          ${sub.phone ? `<a class="btn btn-outline btn-sm" href="${esc(telLink(sub.phone))}"><i class="fas fa-phone" aria-hidden="true"></i> Call</a>` : ''}
+          ${sub.email ? `<a class="btn btn-outline btn-sm" href="${esc(mailtoLink(sub.email, `Re: your ${CONFIG.brandName} enquiry`))}"><i class="fas fa-envelope" aria-hidden="true"></i> Email</a>` : ''}
+        </div>
+        <button class="btn ${sub.handled ? 'btn-ghost' : 'btn-green'} btn-sm" id="sub-handle" type="button">
+          <i class="fas fa-check" aria-hidden="true"></i> ${sub.handled ? 'Mark unhandled' : 'Mark handled'}
+        </button>
+      </div>`;
+    openModal();
+    on($('sub-handle'), 'click', async () => {
+      try {
+        await db.update('form_submissions', { eq: { id: sub.id } }, { handled: !sub.handled });
+        toast('Updated');
+        closeModal();
+        renderSubmissions();
+      } catch (e) {
+        toast(e.message || 'Update failed');
+      }
+    });
+  }
+
+  on($('subs-export-csv'), 'click', () => {
+    if (!CACHED_SUBS.length) return toast('Nothing to export.');
+    const rows = [
+      ['Date', 'Type', 'Name', 'Phone', 'Email', 'Message', 'Handled'],
+      ...CACHED_SUBS.map(s => [
+        fmtDateTime(s.created_at),
+        s.form_type || '',
+        s.name || '',
+        s.phone || '',
+        s.email || '',
+        (s.message || '').replace(/\r?\n/g, ' '),
+        s.handled ? 'Yes' : 'No',
+      ]),
+    ];
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `herbs-co-submissions-${Date.now()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  on($('subs-export-pdf'), 'click', () => {
+    if (!CACHED_SUBS.length) return toast('Nothing to export.');
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    doc.setFontSize(16);
+    doc.text(`${CONFIG.brandName} — Submissions`, 14, 16);
+    doc.setFontSize(10);
+    doc.setTextColor(120);
+    doc.text(`Generated ${fmtDateTime(new Date())} · ${CACHED_SUBS.length} rows`, 14, 22);
+    doc.setTextColor(0);
+    if (doc.autoTable) {
+      doc.autoTable({
+        startY: 28,
+        head: [['Date', 'Type', 'Name', 'Phone', 'Email', 'Message', 'Handled']],
+        body: CACHED_SUBS.map(s => [
+          fmtDateTime(s.created_at),
+          s.form_type || '',
+          s.name || '',
+          s.phone || '',
+          s.email || '',
+          String(s.message || '').slice(0, 120),
+          s.handled ? 'Yes' : 'No',
+        ]),
+        styles: { fontSize: 8, cellPadding: 1.6 },
+        headStyles: { fillColor: [10, 77, 58], textColor: [250, 247, 240] },
+      });
+    }
+    doc.save(`herbs-co-submissions-${Date.now()}.pdf`);
+  });
+
+  on($('subs-purge'), 'click', async () => {
+    if (!confirm('Delete all submissions older than 90 days? This cannot be undone.')) return;
+    const cutoff = new Date(Date.now() - 90 * 24 * 3600 * 1000).toISOString();
+    try {
+      await db.remove('form_submissions', { lt: { created_at: cutoff } });
+      toast('Old submissions deleted');
+      renderSubmissions();
+    } catch (e) {
+      toast(e.message || 'Purge failed');
+    }
+  });
+
+  /* ─── ANALYTICS ──────────────────────────────────────────────────────── */
+  on($('ana-range'), 'change', renderAnalytics);
+  on($('ana-refresh'), 'click', renderAnalytics);
+
+  async function renderAnalytics() {
+    const days = Number($('ana-range').value || 30);
+    const since = new Date(Date.now() - days * 24 * 3600 * 1000).toISOString();
+    const clickWrap = $('ana-clicks');
+    const subWrap = $('ana-subs');
+    clickWrap.innerHTML = `<div class="empty"><div class="spinner" style="border-color:var(--border);border-top-color:var(--green);width:22px;height:22px;"></div></div>`;
+    subWrap.innerHTML = '';
+
+    try {
+      const [clicks, subs] = await Promise.all([
+        db.query('click_events', { gt: { created_at: since }, limit: 10000, select: 'link_key,created_at' }),
+        db.query('form_submissions', { gt: { created_at: since }, limit: 10000, select: 'created_at' }),
+      ]);
+
+      // Clicks by key
+      const byKey = {};
+      (clicks || []).forEach(c => {
+        const k = c.link_key || 'unknown';
+        byKey[k] = (byKey[k] || 0) + 1;
+      });
+      const entries = Object.entries(byKey).sort((a, b) => b[1] - a[1]);
+      if (!entries.length) {
+        clickWrap.innerHTML = `<p class="muted">No clicks recorded in this period.</p>`;
+      } else {
+        const max = Math.max(...entries.map(e => e[1]));
+        clickWrap.innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            ${entries.map(([k, v]) => `
+              <div>
+                <div class="flex-between" style="margin-bottom:4px;">
+                  <strong>${esc(k)}</strong>
+                  <span class="muted">${v}</span>
+                </div>
+                <div style="height:8px;background:var(--light);border-radius:4px;overflow:hidden;">
+                  <div style="height:100%;width:${Math.round((v / max) * 100)}%;background:var(--grad-green);"></div>
+                </div>
+              </div>`).join('')}
+          </div>`;
+      }
+
+      // Subs per day
+      const perDay = {};
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date(Date.now() - i * 24 * 3600 * 1000);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        perDay[key] = 0;
+      }
+      (subs || []).forEach(s => {
+        const d = new Date(s.created_at);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        if (key in perDay) perDay[key]++;
+      });
+      const daysArr = Object.entries(perDay);
+      const maxDay = Math.max(1, ...daysArr.map(d => d[1]));
+      subWrap.innerHTML = `
+        <div class="bar-chart">
+          ${daysArr.map(([k, v]) => `
+            <div class="bar" style="height:${Math.max(2, Math.round((v / maxDay) * 100))}%;" title="${esc(k)}: ${v}">
+              ${v ? `<span class="lbl">${v}</span>` : ''}
+            </div>`).join('')}
+        </div>
+        <div class="bar-legend">
+          <span>${esc(daysArr[0]?.[0] || '')}</span>
+          <span>${esc(daysArr[daysArr.length - 1]?.[0] || '')}</span>
+        </div>
+        <p class="muted mt-2" style="font-size:.85rem;">Total: ${(subs || []).length} submission${(subs || []).length === 1 ? '' : 's'} in the last ${days} days.</p>`;
+    } catch (e) {
+      clickWrap.innerHTML = `<p class="muted">Failed to load: ${esc(e.message)}</p>`;
+    }
+  }
+
+  /* ─── MODAL HELPERS ──────────────────────────────────────────────────── */
+  function openModal() { $('modal').classList.add('open'); }
+  function closeModal() {
+    $('modal').classList.remove('open');
+    $('modal-body').innerHTML = '';
+  }
+  on($('modal-close'), 'click', closeModal);
+  on($('modal'), 'click', (e) => {
+    if (e.target.id === 'modal') closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && $('modal').classList.contains('open')) closeModal();
+  });
+
+})();
+</script>
+</body>
+</html>

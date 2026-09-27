@@ -14,9 +14,8 @@
      click_events:     id, link_key, ip_hash, created_at
    ============================================================================ */
 
-const SB_URL = 'https://ohdsqjqoreigiadgovhr.supabase.co';
-const SB_KEY = 'sb_publishable_M7SogfCthPmn5h9-cAfd1A_2R1_Pyii';
-
+const SB_URL = 'https://brrgwkgfvzwebcgxwzca.supabase.co';
+const SB_KEY = 'sb_publishable_zTmYB-DyadCMbnRTdcLu1g_aHL5Cw5m';
 const CONFIG = {
   brandName: 'Herbs-Co',
   tagline:   'Wellness that pays.',

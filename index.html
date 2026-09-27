@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herbs-Co — Wellness that pays.</title>
+<meta name="description" content="Herbs-Co is a Zambian maker of herbal wellness products and perfumes. Join our WhatsApp community.">
+<meta name="theme-color" content="#0a4d3a">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="shared.css">
+<script src="config.js"></script>
+</head>
+<body>
+
+<nav class="navbar" id="nav">
+  <div class="navbar-inner">
+    <a class="nav-brand" href="#top">
+      <span class="nav-logo" id="nav-logo" aria-hidden="true">H</span>
+      <span id="nav-brand-name">Herbs-Co</span>
+    </a>
+    <div class="nav-spacer"></div>
+    <a class="nav-link hide-mobile" href="#products">Products</a>
+    <a class="nav-link hide-mobile" href="#join">Join</a>
+    <a class="nav-link hide-mobile" href="#contact">Contact</a>
+    <a class="nav-cta" id="nav-cta" href="#join" target="_blank" rel="noopener">
+      <i class="fab fa-whatsapp" aria-hidden="true"></i>
+      Join WhatsApp
+    </a>
+  </div>
+</nav>
+
+<a id="top"></a>
+
+<!-- ─── HERO ─────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <span class="hero-eyebrow">Zambian herbal wellness</span>
+      <h1 id="hero-headline">Wellness that <span class="accent">pays.</span></h1>
+      <p class="hero-sub" id="hero-sub">
+        Herbal wellness products and perfumes, made in Zambia.
+        Join our WhatsApp community to order, ask questions, or become a partner.
+      </p>
+      <div class="hero-ctas">
+        <a class="btn btn-whatsapp btn-lg" id="hero-wa-group" href="#" target="_blank" rel="noopener">
+          <i class="fab fa-whatsapp" aria-hidden="true"></i>
+          Join our WhatsApp group
+        </a>
+        <a class="btn btn-outline btn-lg" id="hero-call" href="#">
+          <i class="fas fa-phone" aria-hidden="true"></i>
+          Call us now
+        </a>
+      </div>
+    </div>
+    <div class="hero-media" id="hero-media">
+      <i class="fas fa-leaf" aria-hidden="true"></i>
+    </div>
+  </div>
+</section>
+
+<!-- ─── VIDEO ────────────────────────────────────────────────────────── -->
+<section class="section" id="video-section" style="display:none;">
+  <div class="container">
+    <h2 class="section-title" id="video-title">Watch</h2>
+    <p class="section-sub" id="video-sub"></p>
+    <div id="video-hero-wrap"></div>
+    <div class="video-grid" id="video-grid"></div>
+  </div>
+</section>
+
+<!-- ─── GALLERY ──────────────────────────────────────────────────────── -->
+<section class="section" id="gallery-section" style="display:none;">
+  <div class="container">
+    <h2 class="section-title">Gallery</h2>
+    <p class="section-sub">A look at our products and our work.</p>
+    <div class="gallery-grid" id="gallery-grid"></div>
+  </div>
+</section>
+
+<!-- ─── ABOUT ────────────────────────────────────────────────────────── -->
+<section class="section" id="about-section" style="display:none;">
+  <div class="container" style="max-width:760px;">
+    <h2 class="section-title" id="about-title">About Herbs-Co</h2>
+    <div id="about-body" style="font-size:1.05rem; color:var(--text);"></div>
+  </div>
+</section>
+
+<!-- ─── PRODUCTS ─────────────────────────────────────────────────────── -->
+<section class="section" id="products">
+  <div class="container">
+    <h2 class="section-title">Our products</h2>
+    <p class="section-sub">Herbal wellness and perfumes. Enquire on WhatsApp for pricing and availability.</p>
+    <div class="product-grid" id="product-grid"></div>
+    <div class="empty" id="product-empty" style="display:none;">
+      <div class="empty-icon"><i class="fas fa-seedling" aria-hidden="true"></i></div>
+      <p>Products coming soon. Message us on WhatsApp to ask what's available.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STEPS ────────────────────────────────────────────────────────── -->
+<section class="section" id="how" style="display:none;">
+  <div class="container">
+    <h2 class="section-title">How to join</h2>
+    <p class="section-sub">Getting started with Herbs-Co takes less than a day.</p>
+    <div class="steps-grid" id="steps-grid"></div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─────────────────────────────────────────────────── -->
+<section class="section" id="testimonials" style="display:none;">
+  <div class="container">
+    <h2 class="section-title">What people say</h2>
+    <p class="section-sub">Stories from our community.</p>
+    <div class="testimonial-grid" id="testimonial-grid"></div>
+  </div>
+</section>
+
+<!-- ─── FAQ ──────────────────────────────────────────────────────────── -->
+<section class="section" id="faq" style="display:none;">
+  <div class="container">
+    <h2 class="section-title">Frequently asked questions</h2>
+    <p class="section-sub">Everything you need to know before you reach out.</p>
+    <div class="faq-list" id="faq-list"></div>
+  </div>
+</section>
+
+<!-- ─── JOIN FORM ────────────────────────────────────────────────────── -->
+<section class="section" id="join">
+  <div class="container">
+    <div class="cta-block" style="margin-top:0;">
+      <h2>Join the team</h2>
+      <p>Tell us a little about yourself and we'll get back to you on WhatsApp.</p>
+    </div>
+    <div class="join-wrap" id="join-form-wrap">
+      <form id="join-form" novalidate>
+        <div class="field">
+          <label class="label" for="join-name">Your name <span class="req">*</span></label>
+          <input class="input" type="text" id="join-name" name="name" autocomplete="name" required>
+          <div class="err-msg" id="join-name-err"></div>
+        </div>
+        <div class="field">
+          <label class="label" for="join-phone">Phone / WhatsApp <span class="req">*</span></label>
+          <input class="input" type="tel" id="join-phone" name="phone" autocomplete="tel" placeholder="+260 97 000 0000" required>
+          <div class="hint">We'll reply on WhatsApp. Use the number you actually use.</div>
+          <div class="err-msg" id="join-phone-err"></div>
+        </div>
+        <div class="field">
+          <label class="label" for="join-email">Email <span class="muted" style="font-weight:400;">(optional)</span></label>
+          <input class="input" type="email" id="join-email" name="email" autocomplete="email">
+        </div>
+        <div class="field">
+          <label class="label" for="join-message">Why do you want to join? <span class="req">*</span></label>
+          <textarea class="textarea" id="join-message" name="message" required minlength="10" placeholder="Tell us briefly why you're interested."></textarea>
+          <div class="err-msg" id="join-message-err"></div>
+        </div>
+        <button class="btn btn-green btn-full btn-lg" type="submit" id="join-submit">
+          <i class="fas fa-paper-plane" aria-hidden="true"></i>
+          Send my request
+        </button>
+        <p class="hint mt-2 text-center" style="margin-bottom:0;">By submitting, you agree to be contacted by Herbs-Co on WhatsApp or phone.</p>
+      </form>
+    </div>
+    <div class="join-wrap" id="join-success" style="display:none;">
+      <div class="join-success">
+        <div class="check"><i class="fas fa-check" aria-hidden="true"></i></div>
+        <h3>Thank you — we received it.</h3>
+        <p class="muted">We'll reach out on WhatsApp within 1–2 business days.</p>
+        <a class="btn btn-whatsapp btn-lg mt-2" id="join-success-wa" href="#" target="_blank" rel="noopener">
+          <i class="fab fa-whatsapp" aria-hidden="true"></i>
+          Join the WhatsApp group now
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ──────────────────────────────────────────────────────── -->
+<section class="section" id="contact">
+  <div class="container">
+    <h2 class="section-title">Get in touch</h2>
+    <p class="section-sub">Pick the channel that works best for you.</p>
+    <div class="contact-grid" id="contact-grid"></div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ───────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="container">
+    <div class="flex-between">
+      <div>
+        <h4 id="footer-brand">Herbs-Co</h4>
+        <p id="footer-tagline">Wellness that pays.</p>
+      </div>
+      <div>
+        <p><i class="fas fa-location-dot" aria-hidden="true"></i> <span id="footer-city">Lusaka, Zambia</span></p>
+        <p><a id="footer-wa" href="#" target="_blank" rel="noopener"><i class="fab fa-whatsapp" aria-hidden="true"></i> Chat on WhatsApp</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © <span id="footer-year"></span> <span id="footer-brand-2">Herbs-Co</span>. All rights reserved.
+    </div>
+  </div>
+</footer>
+
+<!-- ─── LIGHTBOX ─────────────────────────────────────────────────────── -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
+  <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close preview">
+    <i class="fas fa-xmark" aria-hidden="true"></i>
+  </button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+/* ============================================================================
+   index.html — public landing page controller
+   ============================================================================ */
+(async function () {
+  'use strict';
+
+  /* ─── state ──────────────────────────────────────────────────────────── */
+  let LINKS = [];
+  let CONTENT = {};
+  let GROUP_URL = '';
+  let WA_NUMBER = CONFIG.waNumber;
+  let PHONE_NUMBER = '';
+  let EMAIL_ADDR = '';
+
+  /* ─── tiny DOM helpers ───────────────────────────────────────────────── */
+  const $ = (id) => document.getElementById(id);
+  const on = (el, ev, fn) => el && el.addEventListener(ev, fn);
+  const show = (el) => { if (el) el.style.display = ''; };
+  const hide = (el) => { if (el) el.style.display = 'none'; };
+
+  /* ─── boot ───────────────────────────────────────────────────────────── */
+  try {
+    const [settings, links, allContent] = await Promise.all([
+      getSiteSettings(),
+      getLinks(),
+      getContent(),
+    ]);
+
+    CONFIG.settings = settings || {};
+    if (settings) {
+      if (settings.brand_name) CONFIG.brandName = settings.brand_name;
+      if (settings.tagline) CONFIG.tagline = settings.tagline;
+      if (settings.wa_number) CONFIG.waNumber = settings.wa_number;
+      if (settings.site_url) CONFIG.siteUrl = settings.site_url;
+    }
+    WA_NUMBER = String(CONFIG.waNumber || '').replace(/\D/g, '');
+
+    LINKS = links || [];
+    GROUP_URL = await getGroupInviteUrl(LINKS);
+
+    // Group content by section, preserving sort_order.
+    CONTENT = {};
+    (allContent || []).forEach(row => {
+      const s = row.section || 'misc';
+      if (!CONTENT[s]) CONTENT[s] = [];
+      CONTENT[s].push(row);
+    });
+
+    // Pull phone / email for the call & contact cards.
+    const phoneLink = LINKS.find(l => l.key === 'phone');
+    const emailLink = LINKS.find(l => l.key === 'email');
+    PHONE_NUMBER = phoneLink ? phoneLink.value : '';
+    EMAIL_ADDR = emailLink ? emailLink.value : '';
+
+    applyBranding();
+    renderHero();
+    renderVideos();
+    renderGallery();
+    renderAbout();
+    renderProducts();
+    renderSteps();
+    renderTestimonials();
+    renderFaq();
+    renderContact();
+    wireJoinForm();
+
+    // Apply any custom logo URL.
+    const logoUrl = (CONFIG.settings && CONFIG.settings.logo_url) || '';
+    if (logoUrl) {
+      const logoEl = $('nav-logo');
+      if (logoEl) logoEl.innerHTML = `<img src="${esc(logoUrl)}" alt="${esc(CONFIG.brandName)}">`;
+    }
+  } catch (e) {
+    // Non-fatal — render brand defaults.
+    applyBranding();
+    renderContact();
+    wireJoinForm();
+    toast('Could not load latest content.');
+  }
+
+  /* ─── branding ───────────────────────────────────────────────────────── */
+  function applyBranding() {
+    document.title = `${CONFIG.brandName} — ${CONFIG.tagline}`;
+    const brandEls = ['nav-brand-name', 'footer-brand', 'footer-brand-2'];
+    brandEls.forEach(id => {
+      const el = $(id);
+      if (el) el.textContent = CONFIG.brandName;
+    });
+    const tagEl = $('footer-tagline');
+    if (tagEl) tagEl.textContent = CONFIG.tagline;
+    const yearEl = $('footer-year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    const navCta = $('nav-cta');
+    if (navCta) navCta.href = GROUP_URL || waLink(WA_NUMBER, `Hi ${CONFIG.brandName}, I'd like to join.`);
+
+    const footerWa = $('footer-wa');
+    if (footerWa) footerWa.href = waLink(WA_NUMBER, `Hi ${CONFIG.brandName}!`);
+  }
+
+  /* ─── hero ───────────────────────────────────────────────────────────── */
+  function renderHero() {
+    const s = CONFIG.settings || {};
+    const headline = s.hero_headline || `${CONFIG.tagline.replace(/\.$/, '')}`;
+    // Split on last word to color it gold.
+    const h1 = $('hero-headline');
+    if (h1) {
+      const words = String(headline).trim().split(/\s+/);
+      if (words.length > 1) {
+        const last = words.pop();
+        h1.innerHTML = `${esc(words.join(' '))} <span class="accent">${esc(last)}</span>`;
+      } else {
+        h1.textContent = headline;
+      }
+    }
+    if (s.hero_sub) {
+      const subEl = $('hero-sub');
+      if (subEl) subEl.textContent = s.hero_sub;
+    }
+
+    const groupBtn = $('hero-wa-group');
+    if (groupBtn) {
+      groupBtn.href = GROUP_URL || waLink(WA_NUMBER, `Hi ${CONFIG.brandName}, I'd like to join.`);
+      on(groupBtn, 'click', () => trackClick('group'));
+    }
+
+    const callBtn = $('hero-call');
+    if (callBtn && PHONE_NUMBER) {
+      callBtn.href = telLink(PHONE_NUMBER);
+      on(callBtn, 'click', () => trackClick('phone'));
+    } else if (callBtn) {
+      callBtn.href = waLink(WA_NUMBER, `Hi ${CONFIG.brandName}, please call me back.`);
+    }
+
+    // Hero image (content where section='hero', first row with media_url)
+    const heroRow = (CONTENT.hero || []).find(r => r.media_url);
+    const heroMedia = $('hero-media');
+    if (heroRow && heroMedia && heroRow.media_type === 'image') {
+      heroMedia.innerHTML = `<img src="${esc(heroRow.media_url)}" alt="${esc(heroRow.title || CONFIG.brandName)}">`;
+    }
+  }
+
+  /* ─── videos ─────────────────────────────────────────────────────────── */
+  function renderVideos() {
+    const rows = CONTENT.video || [];
+    if (!rows.length) return;
+    show($('video-section'));
+
+    if (rows.length === 1) {
+      $('video-hero-wrap').innerHTML = videoCard(rows[0]);
+      return;
+    }
+
+    // First video big, rest in grid.
+    const sorted = rows.slice().sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    $('video-hero-wrap').innerHTML = videoCard(sorted[0]);
+    $('video-grid').innerHTML = sorted.slice(1).map(videoCard).join('');
+  }
+
+  function videoCard(row) {
+    const embed = videoEmbed(row.media_url || '');
+    const title = esc(row.title || '');
+    const body = row.body ? `<p>${esc(row.body)}</p>` : '';
+    const meta = (title || body)
+      ? `<div class="meta">${title ? `<h3>${title}</h3>` : ''}${body}</div>`
+      : '';
+    if (embed.kind === 'youtube') {
+      return `<div class="video-card">
+        <div class="ratio"><iframe src="${esc(embed.src)}" title="${title || 'Video'}" loading="lazy" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe></div>
+        ${meta}
+      </div>`;
+    }
+    if (embed.kind === 'mp4') {
+      return `<div class="video-card">
+        <div class="ratio"><video src="${esc(embed.src)}" controls preload="metadata" playsinline></video></div>
+        ${meta}
+      </div>`;
+    }
+    // Unknown — link out.
+    if (!row.media_url) return '';
+    return `<div class="video-card">
+      <div class="ratio" style="display:flex;align-items:center;justify-content:center;background:var(--dark);">
+        <a class="btn btn-gold" href="${esc(row.media_url)}" target="_blank" rel="noopener">Open video</a>
+      </div>
+      ${meta}
+    </div>`;
+  }
+
+  /* ─── gallery ────────────────────────────────────────────────────────── */
+  function renderGallery() {
+    const rows = (CONTENT.image || []).filter(r => r.media_url);
+    if (!rows.length) return;
+    show($('gallery-section'));
+    const grid = $('gallery-grid');
+    grid.innerHTML = rows.map(r => {
+      const alt = esc(r.title || 'Gallery image');
+      return `<button class="gallery-item" type="button" data-src="${esc(r.media_url)}" aria-label="Open image">
+        <img src="${esc(r.media_url)}" alt="${alt}" loading="lazy">
+      </button>`;
+    }).join('');
+    grid.querySelectorAll('.gallery-item').forEach(item => {
+      on(item, 'click', () => openLightbox(item.getAttribute('data-src')));
+    });
+  }
+
+  function openLightbox(src) {
+    const lb = $('lightbox');
+    const img = $('lightbox-img');
+    if (!lb || !img) return;
+    img.src = src;
+    lb.classList.add('open');
+  }
+  on($('lightbox-close'), 'click', () => $('lightbox').classList.remove('open'));
+  on($('lightbox'), 'click', (e) => {
+    if (e.target.id === 'lightbox') e.currentTarget.classList.remove('open');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') $('lightbox') && $('lightbox').classList.remove('open');
+  });
+
+  /* ─── about ──────────────────────────────────────────────────────────── */
+  function renderAbout() {
+    const rows = CONTENT.about || [];
+    if (!rows.length) return;
+    show($('about-section'));
+    const row = rows[0];
+    if (row.title) {
+      const t = $('about-title');
+      if (t) t.textContent = row.title;
+    }
+    const body = $('about-body');
+    if (body) {
+      // Split on double newline into paragraphs.
+      const parts = String(row.body || '').split(/\n{2,}/).filter(Boolean);
+      body.innerHTML = parts.map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('');
+    }
+  }
+
+  /* ─── products ───────────────────────────────────────────────────────── */
+  function renderProducts() {
+    const rows = (CONTENT.product || []).slice().sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    const grid = $('product-grid');
+    const empty = $('product-empty');
+    if (!rows.length) {
+      if (grid) grid.innerHTML = '';
+      if (empty) show(empty);
+      return;
+    }
+    if (empty) hide(empty);
+    grid.innerHTML = rows.map(p => {
+      const thumb = p.media_url
+        ? `<div class="thumb"><img src="${esc(p.media_url)}" alt="${esc(p.title || 'Product')}" loading="lazy"></div>`
+        : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--border);font-size:2rem;"><i class="fas fa-leaf" aria-hidden="true"></i></div>`;
+      const waMsg = `Hi ${CONFIG.brandName}, I'd like to enquire about: ${p.title || 'a product'}.`;
+      return `<div class="product-card">
+        ${thumb}
+        <div class="body">
+          <h3>${esc(p.title || 'Product')}</h3>
+          <p>${esc(p.body || '')}</p>
+          <a class="btn btn-whatsapp btn-full" href="${esc(waLink(WA_NUMBER, waMsg))}" target="_blank" rel="noopener" data-track="product">
+            <i class="fab fa-whatsapp" aria-hidden="true"></i>
+            Enquire on WhatsApp
+          </a>
+        </div>
+      </div>`;
+    }).join('');
+    grid.querySelectorAll('[data-track="product"]').forEach(el => {
+      on(el, 'click', () => trackClick('product'));
+    });
+  }
+
+  /* ─── steps ──────────────────────────────────────────────────────────── */
+  function renderSteps() {
+    const rows = (CONTENT.step || []).slice().sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    if (!rows.length) return;
+    show($('how'));
+    $('steps-grid').innerHTML = rows.map((s, i) => {
+      const num = s.sort_order && s.sort_order > 0 ? s.sort_order : (i + 1);
+      return `<div class="step-card">
+        <div class="step-num">${esc(String(num))}</div>
+        <h3>${esc(s.title || `Step ${num}`)}</h3>
+        <p>${esc(s.body || '')}</p>
+      </div>`;
+    }).join('');
+  }
+
+  /* ─── testimonials ───────────────────────────────────────────────────── */
+  function renderTestimonials() {
+    const rows = CONTENT.testimonial || [];
+    if (!rows.length) return;
+    show($('testimonials'));
+    $('testimonial-grid').innerHTML = rows.map(t => {
+      const title = t.title || '';
+      const [name, role] = title.split('|').map(s => (s || '').trim());
+      const quote = t.body || '';
+      return `<div class="testimonial-card">
+        <blockquote>“${esc(quote)}”</blockquote>
+        <div class="who">${esc(name || 'Customer')}${role ? `<small>${esc(role)}</small>` : ''}</div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ─── faq ────────────────────────────────────────────────────────────── */
+  function renderFaq() {
+    const rows = (CONTENT.faq || []).slice().sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    if (!rows.length) return;
+    show($('faq'));
+    const list = $('faq-list');
+    list.innerHTML = rows.map(r => `
+      <div class="faq-item">
+        <button class="faq-q" type="button" aria-expanded="false">
+          <span>${esc(r.title || 'Question')}</span>
+          <i class="fas fa-chevron-down chev" aria-hidden="true"></i>
+        </button>
+        <div class="faq-a">${esc(r.body || '').replace(/\n/g, '<br>')}</div>
+      </div>`).join('');
+    list.querySelectorAll('.faq-q').forEach(btn => {
+      on(btn, 'click', () => {
+        const item = btn.closest('.faq-item');
+        const open = item.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    });
+  }
+
+  /* ─── contact ────────────────────────────────────────────────────────── */
+  function renderContact() {
+    const grid = $('contact-grid');
+    if (!grid) return;
+
+    const cards = [];
+    const waVal = WA_NUMBER;
+    const groupVal = GROUP_URL;
+    const emailVal = EMAIL_ADDR;
+    const phoneVal = PHONE_NUMBER;
+
+    if (waVal) {
+      cards.push(contactCard({
+        cls: 'wa',
+        icon: 'fab fa-whatsapp',
+        title: 'Chat on WhatsApp',
+        sub: `+${esc(waVal)}`,
+        href: waLink(waVal, `Hi ${CONFIG.brandName}!`),
+        track: 'whatsapp',
+        external: true,
+      }));
+    }
+    if (groupVal) {
+      cards.push(contactCard({
+        cls: 'wa',
+        icon: 'fas fa-users',
+        title: 'Join WhatsApp group',
+        sub: 'Community updates & offers',
+        href: groupVal,
+        track: 'group',
+        external: true,
+      }));
+    }
+    if (emailVal) {
+      cards.push(contactCard({
+        cls: 'email',
+        icon: 'fas fa-envelope',
+        title: 'Email us',
+        sub: esc(emailVal),
+        href: mailtoLink(emailVal, `Enquiry from ${CONFIG.brandName} website`),
+        track: 'email',
+        external: false,
+      }));
+    }
+    if (phoneVal) {
+      cards.push(contactCard({
+        cls: 'call',
+        icon: 'fas fa-phone',
+        title: 'Call us',
+        sub: esc(phoneVal),
+        href: telLink(phoneVal),
+        track: 'phone',
+        external: false,
+      }));
+    }
+    // Socials from contact_links (facebook, tiktok, instagram, etc.)
+    LINKS.filter(l => ['facebook', 'tiktok', 'instagram', 'twitter', 'youtube'].includes(l.key)).forEach(l => {
+      cards.push(contactCard({
+        cls: '',
+        icon: socialIcon(l.icon || l.key),
+        title: l.label || l.key,
+        sub: l.value,
+        href: l.value,
+        track: l.key,
+        external: true,
+      }));
+    });
+
+    if (!cards.length) {
+      grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">
+        <div class="empty-icon"><i class="fas fa-address-book" aria-hidden="true"></i></div>
+        <p>Contact details coming soon. Please check back later.</p>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = cards.join('');
+    grid.querySelectorAll('[data-track]').forEach(el => {
+      on(el, 'click', () => trackClick(el.getAttribute('data-track')));
+    });
+
+    // Footer city override from settings.
+    if (CONFIG.settings && CONFIG.settings.city) {
+      const c = $('footer-city');
+      if (c) c.textContent = CONFIG.settings.city;
+    }
+  }
+
+  function contactCard({ cls, icon, title, sub, href, track, external }) {
+    const target = external ? ' target="_blank" rel="noopener"' : '';
+    return `<a class="contact-card ${esc(cls || '')}" href="${esc(href)}" data-track="${esc(track || '')}"${target}>
+      <span class="ic"><i class="${esc(icon)}" aria-hidden="true"></i></span>
+      <span class="txt"><strong>${esc(title)}</strong><small>${esc(sub || '')}</small></span>
+    </a>`;
+  }
+
+  function socialIcon(k) {
+    const key = String(k || '').toLowerCase();
+    if (key.includes('facebook')) return 'fab fa-facebook-f';
+    if (key.includes('tiktok')) return 'fab fa-tiktok';
+    if (key.includes('instagram')) return 'fab fa-instagram';
+    if (key.includes('twitter') || key === 'x') return 'fab fa-x-twitter';
+    if (key.includes('youtube')) return 'fab fa-youtube';
+    if (key.includes('linkedin')) return 'fab fa-linkedin';
+    return 'fas fa-link';
+  }
+
+  /* ─── join form ──────────────────────────────────────────────────────── */
+  function wireJoinForm() {
+    const form = $('join-form');
+    if (!form) return;
+
+    const successWa = $('join-success-wa');
+    if (successWa) {
+      successWa.href = GROUP_URL || waLink(WA_NUMBER, `Hi ${CONFIG.brandName}, I just submitted the join form.`);
+    }
+
+    on(form, 'submit', async (e) => {
+      e.preventDefault();
+      const name = $('join-name').value.trim();
+      const phone = $('join-phone').value.trim();
+      const email = $('join-email').value.trim();
+      const message = $('join-message').value.trim();
+
+      clearErrors();
+
+      if (!name) return fieldErr('join-name', 'Please tell us your name.');
+      if (!phone) return fieldErr('join-phone', 'Please add a phone number.');
+      if (!isPhoneZambia(phone)) return fieldErr('join-phone', 'That phone number looks too short.');
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fieldErr('join-email', 'That email looks invalid.');
+      if (!message || message.length < 10) return fieldErr('join-message', 'Please write at least a sentence.');
+
+      if (!rateLimit('join-form', 60)) {
+        toast('Please wait a minute before submitting again.');
+        return;
+      }
+
+      const btn = $('join-submit');
+      setLoading(btn, true, 'Sending…');
+      try {
+        await submitForm({
+          form_type: 'join',
+          name,
+          phone,
+          email: email || null,
+          message,
+        });
+        hide($('join-form-wrap'));
+        show($('join-success'));
+        toast('Request sent. Thank you!');
+      } catch (err) {
+        toast(err.message || 'Could not send. Please try again.');
+        setLoading(btn, false);
+      }
+    });
+  }
+
+  function fieldErr(id, msg) {
+    const err = document.getElementById(id + '-err');
+    if (err) err.textContent = msg;
+    const input = document.getElementById(id);
+    if (input) {
+      input.focus();
+      input.style.borderColor = 'var(--red)';
+    }
+  }
+  function clearErrors() {
+    ['join-name', 'join-phone', 'join-email', 'join-message'].forEach(id => {
+      const err = document.getElementById(id + '-err');
+      if (err) err.textContent = '';
+      const input = document.getElementById(id);
+      if (input) input.style.borderColor = '';
+    });
+  }
+
+})();
+</script>
+</body>
+</html>

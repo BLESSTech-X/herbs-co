@@ -538,7 +538,10 @@ async function getGroupInviteUrl(links) {
 function videoEmbed(url) {
   if (!url) return { kind: 'unknown', src: '' };
   const u = String(url).trim();
-  const yt = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+  // Matches youtube.com/watch, youtu.be, /shorts/, /embed/, /live/, /v/, m.youtube.com
+  const yt = u.match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/
+  );
   if (yt) return { kind: 'youtube', src: `https://www.youtube.com/embed/${yt[1]}` };
   if (/\.mp4(\?|$)/i.test(u)) return { kind: 'mp4', src: u };
   return { kind: 'unknown', src: u };

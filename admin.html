@@ -669,7 +669,7 @@
     const isVid = row.media_type === 'video' && row.media_url;
     let preview = '<span class="muted">—</span>';
     if (isImg) preview = `<img src="${esc(row.media_url)}" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:6px;">`;
-    else if (isVid) preview = `<span class="pill pill-active"><i class="fas fa-video" aria-hidden="true"></i> Video</span>`;
+        else if (isVid) preview = `<a href="${esc(row.media_url)}" target="_blank" rel="noopener" class="pill pill-active" style="text-decoration:none;"><i class="fas fa-video" aria-hidden="true"></i> Video</a>`;
     else if (row.body) preview = `<span class="muted">${esc(String(row.body).slice(0, 60))}${row.body.length > 60 ? '…' : ''}</span>`;
 
     return `<tr>
@@ -923,7 +923,9 @@
     on($('cf-url-toggle'), 'click', () => {
       $('cf-url-field').classList.toggle('open');
     });
-    if (existingUrl && !/^https?:\/\/[^/]*\.(supabase|amazonaws)/i.test(existingUrl)) {
+        // Always show the URL field if a URL exists — even Supabase-stored ones.
+    // It's the only way to edit an existing URL or delete one.
+    if (existingUrl) {
       $('cf-url-field').classList.add('open');
     }
 
@@ -949,11 +951,11 @@
           payload.media_url = await dz.commit();
           payload.media_type = 'image';
         } else {
-          const pasted = ($('cf-media-url').value || '').trim();
+                    const pasted = ($('cf-media-url').value || '').trim();
           if (pasted) {
             payload.media_url = pasted;
-            if (/youtube\.com|youtu\.be/i.test(pasted)) payload.media_type = 'video';
-            else if (/\.mp4(\?|$)/i.test(pasted)) payload.media_type = 'video';
+            if (/youtube\.com|youtu\.be|vimeo\.com/i.test(pasted)) payload.media_type = 'video';
+            else if (/\.(mp4|webm|ogg|mov)(\?|$)/i.test(pasted)) payload.media_type = 'video';
             else payload.media_type = 'image';
           } else if (row.media_url) {
             payload.media_url = row.media_url;

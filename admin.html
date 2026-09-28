@@ -17,6 +17,147 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+/* ─── Admin-only styles ────────────────────────────────────────────── */
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: var(--r);
+  padding: 28px 20px;
+  text-align: center;
+  background: var(--light);
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+  position: relative;
+}
+.dropzone:hover,
+.dropzone.dragover {
+  border-color: var(--green);
+  background: #eef5f1;
+}
+.dropzone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.dropzone .dz-icon {
+  font-size: 1.8rem;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+.dropzone .dz-text {
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: .95rem;
+  color: var(--text);
+}
+.dropzone .dz-hint {
+  font-size: .82rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.dz-preview {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  margin-top: 12px;
+}
+.dz-preview img {
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  display: block;
+}
+.dz-preview .remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(10,26,20,.75);
+  color: #fff;
+  border: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.dz-preview .remove:hover { background: var(--red); }
+.upload-progress {
+  margin-top: 10px;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  display: none;
+}
+.upload-progress.active { display: block; }
+.upload-progress .bar {
+  height: 100%;
+  width: 0%;
+  background: var(--grad-green);
+  transition: width .15s ease;
+}
+.upload-status {
+  font-size: .82rem;
+  color: var(--muted);
+  margin-top: 6px;
+}
+.url-toggle {
+  background: transparent;
+  border: 0;
+  color: var(--green);
+  font-size: .88rem;
+  padding: 4px 0;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+}
+.url-toggle:hover { text-decoration: underline; }
+.url-field {
+  display: none;
+  margin-top: 8px;
+}
+.url-field.open { display: block; }
+.divider-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: .8rem;
+  margin: 14px 0;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.divider-or::before,
+.divider-or::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.logo-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.logo-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.logo-thumb img { width: 100%; height: 100%; object-fit: contain; }
+.logo-thumb i { color: var(--border); font-size: 1.3rem; }
+</style>
 </head>
 <body>
 
@@ -136,7 +277,7 @@
       <div class="admin-hdr">
         <h2>Settings</h2>
       </div>
-      <div class="card" style="max-width:640px;">
+      <div class="card" style="max-width:680px;">
         <form id="settings-form">
           <div class="field">
             <label class="label" for="set-brand">Brand name</label>
@@ -167,11 +308,29 @@
             <label class="label" for="set-site">Site URL</label>
             <input class="input" type="url" id="set-site" placeholder="https://herbs-co.vercel.app">
           </div>
+
           <div class="field">
-            <label class="label" for="set-logo">Logo URL</label>
-            <input class="input" type="url" id="set-logo" placeholder="https://.../logo.png">
-            <div class="hint">Leave blank to use the brand letter mark.</div>
+            <label class="label">Logo</label>
+            <div class="logo-row">
+              <div class="logo-thumb" id="logo-thumb">
+                <i class="fas fa-image" aria-hidden="true"></i>
+              </div>
+              <div style="flex:1;">
+                <input type="file" id="set-logo-file" accept="image/*" style="display:none;">
+                <button class="btn btn-outline btn-sm" type="button" id="set-logo-pick">
+                  <i class="fas fa-upload" aria-hidden="true"></i> Upload logo
+                </button>
+                <button class="btn btn-ghost btn-sm" type="button" id="set-logo-clear" style="display:none;">
+                  <i class="fas fa-xmark" aria-hidden="true"></i> Remove
+                </button>
+                <div class="upload-progress" id="set-logo-progress"><div class="bar"></div></div>
+                <div class="upload-status" id="set-logo-status"></div>
+              </div>
+            </div>
+            <input type="hidden" id="set-logo" value="">
+            <div class="hint">Square PNG or JPG, at least 200×200px. Leave blank to use the brand letter mark.</div>
           </div>
+
           <div class="field">
             <label class="label" for="set-city">City / region</label>
             <input class="input" type="text" id="set-city" placeholder="Lusaka, Zambia">
@@ -279,10 +438,9 @@
     <div class="modal-body" id="modal-body"></div>
   </div>
 </div>
-
 <script>
 /* ============================================================================
-   admin.html — CMS controller
+   admin.html — CMS controller (with upload-first media UX)
    ============================================================================ */
 (function () {
   'use strict';
@@ -293,7 +451,6 @@
   const hide = (el) => { if (el) el.style.display = 'none'; };
 
   let CURRENT_USER_IS_ADMIN = false;
-  let CURRENT_SECTION = 'content';
   let CACHED_CONTENT = [];
   let CACHED_LINKS = [];
   let CACHED_SETTINGS = {};
@@ -304,8 +461,7 @@
       show($('login-screen'));
       return;
     }
-    const ok = await checkAdmin();
-    if (!ok) return;
+    await checkAdmin();
   })();
 
   async function checkAdmin() {
@@ -370,7 +526,6 @@
   });
 
   function switchSection(name) {
-    CURRENT_SECTION = name;
     document.querySelectorAll('#admin-nav button[data-section]').forEach(b => {
       b.classList.toggle('active', b.getAttribute('data-section') === name);
     });
@@ -424,7 +579,6 @@
       </div>`;
       return;
     }
-    // Group by section, in the order of SECTION_LABELS keys.
     const groups = {};
     CACHED_CONTENT.forEach(row => {
       const s = row.section || 'misc';
@@ -499,6 +653,152 @@
 
   on($('add-content-btn'), 'click', () => openContentModal(null));
 
+  /* ─── UPLOAD DROPZONE BUILDER ────────────────────────────────────────── */
+  // Returns HTML for a reusable dropzone block.
+  // inputId must be unique on the page.
+  function dropzoneHTML(inputId, existingUrl, existingType) {
+    const hasMedia = !!existingUrl;
+    const isImg = hasMedia && (existingType === 'image' || /\.(jpe?g|png|gif|webp|avif)(\?|$)/i.test(existingUrl));
+    return `
+      <div class="dropzone" id="${inputId}-dz">
+        <input type="file" id="${inputId}" accept="image/*">
+        <div class="dz-icon"><i class="fas fa-cloud-arrow-up" aria-hidden="true"></i></div>
+        <div class="dz-text">Click to upload or drag an image here</div>
+        <div class="dz-hint">JPG, PNG, GIF or WebP · max 8 MB</div>
+      </div>
+      <div class="upload-progress" id="${inputId}-prog"><div class="bar"></div></div>
+      <div class="upload-status" id="${inputId}-status"></div>
+      <div class="dz-preview" id="${inputId}-preview" style="${isImg ? '' : 'display:none;'}">
+        ${isImg ? `<img src="${esc(existingUrl)}" alt=""><button type="button" class="remove" data-act="clear-upload" data-target="${inputId}" aria-label="Remove"><i class="fas fa-xmark"></i></button>` : ''}
+      </div>
+    `;
+  }
+
+  // Wires a dropzone so files dropped/selected update a hidden state and preview.
+  // Returns { getFile, getUrl, setUrl, clear } so the caller can read the result.
+  function wireDropzone(inputId) {
+    const dz = $(inputId + '-dz');
+    const input = $(inputId);
+    const prog = $(inputId + '-prog');
+    const bar = prog ? prog.querySelector('.bar') : null;
+    const status = $(inputId + '-status');
+    const preview = $(inputId + '-preview');
+
+    let currentFile = null;
+    let currentUrl = '';
+    let uploading = false;
+
+    function setPreview(url, type) {
+      currentUrl = url || '';
+      if (!preview) return;
+      if (url && (type === 'image' || !type)) {
+        preview.style.display = '';
+        preview.innerHTML = `<img src="${esc(url)}" alt=""><button type="button" class="remove" data-act="clear-upload" data-target="${inputId}" aria-label="Remove"><i class="fas fa-xmark"></i></button>`;
+      } else {
+        preview.style.display = 'none';
+        preview.innerHTML = '';
+      }
+      bindClear();
+    }
+
+    function bindClear() {
+      if (!preview) return;
+      const btn = preview.querySelector('[data-act="clear-upload"]');
+      if (btn) {
+        on(btn, 'click', () => {
+          currentFile = null;
+          currentUrl = '';
+          if (input) input.value = '';
+          if (status) status.textContent = '';
+          if (prog) prog.classList.remove('active');
+          setPreview('', '');
+        });
+      }
+    }
+
+    function readFile(file) {
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        toast('Only image files are supported.');
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        toast('Image must be under 8 MB.');
+        return;
+      }
+      currentFile = file;
+      currentUrl = '';
+      const reader = new FileReader();
+      reader.onload = (ev) => setPreview(ev.target.result, 'image');
+      reader.readAsDataURL(file);
+      if (status) status.textContent = file.name + ' · ready to upload';
+    }
+
+    on(input, 'change', (e) => readFile(e.target.files[0]));
+
+    if (dz) {
+      ['dragenter', 'dragover'].forEach(ev => {
+        on(dz, ev, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dz.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(ev => {
+        on(dz, ev, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dz.classList.remove('dragover');
+        });
+      });
+      on(dz, 'drop', (e) => {
+        const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        readFile(file);
+      });
+    }
+
+    bindClear();
+
+    return {
+      getFile: () => currentFile,
+      getUrl: () => currentUrl,
+      hasPending: () => !!currentFile,
+      setUrl: (u, type) => setPreview(u, type),
+      clear: () => {
+        currentFile = null;
+        currentUrl = '';
+        if (input) input.value = '';
+        if (status) status.textContent = '';
+        setPreview('', '');
+      },
+      // Uploads pending file to Supabase and returns the public URL.
+      // If no pending file, returns currentUrl unchanged.
+      async commit() {
+        if (!currentFile) return currentUrl;
+        if (uploading) throw new Error('Already uploading');
+        uploading = true;
+        if (prog) { prog.classList.add('active'); bar.style.width = '0%'; }
+        try {
+          const url = await uploadContentImage(currentFile, (pct) => {
+            if (bar) bar.style.width = pct + '%';
+            if (status) status.textContent = `Uploading… ${pct}%`;
+          });
+          currentUrl = url;
+          if (status) status.textContent = 'Uploaded ✓';
+          setTimeout(() => { if (prog) prog.classList.remove('active'); }, 400);
+          return url;
+        } catch (e) {
+          if (prog) prog.classList.remove('active');
+          if (status) status.textContent = '';
+          throw e;
+        } finally {
+          uploading = false;
+        }
+      },
+    };
+  }
+
+  /* ─── CONTENT MODAL ──────────────────────────────────────────────────── */
   function openContentModal(id) {
     const isNew = !id;
     const row = isNew ? {
@@ -506,6 +806,9 @@
       sort_order: 0, active: true,
     } : CACHED_CONTENT.find(r => String(r.id) === String(id));
     if (!row) return;
+
+    const existingUrl = row.media_url || '';
+    const existingType = row.media_type || '';
 
     $('modal-title').textContent = isNew ? 'Add Content' : 'Edit Content';
     $('modal-body').innerHTML = `
@@ -518,40 +821,45 @@
             ).join('')}
           </select>
         </div>
+
         <div class="field">
           <label class="label" for="cf-title">Title</label>
           <input class="input" type="text" id="cf-title" value="${esc(row.title || '')}">
           <div class="hint" id="cf-title-hint">For testimonials use "Name | Role". For FAQ this is the question.</div>
         </div>
+
+        <div class="field">
+          <label class="label">Media</label>
+          ${dropzoneHTML('cf-media', existingUrl, existingType)}
+
+          <div class="divider-or">or</div>
+
+          <button type="button" class="url-toggle" id="cf-url-toggle">
+            <i class="fas fa-link" aria-hidden="true"></i>
+            Paste a URL instead (YouTube, image link, etc.)
+          </button>
+          <div class="url-field" id="cf-url-field">
+            <input class="input" type="url" id="cf-media-url" value="${esc(existingUrl)}" placeholder="https://youtube.com/watch?v=...">
+            <div class="hint">YouTube links become embedded videos. Other URLs are used directly.</div>
+          </div>
+        </div>
+
         <div class="field">
           <label class="label" for="cf-body">Body</label>
           <textarea class="textarea" id="cf-body">${esc(row.body || '')}</textarea>
         </div>
-        <div class="field">
-          <label class="label" for="cf-media-url">Media URL</label>
-          <input class="input" type="url" id="cf-media-url" value="${esc(row.media_url || '')}" placeholder="https://... or YouTube link">
-          <div class="hint">Paste a YouTube link, an image URL, or an MP4 link. Or upload below.</div>
-        </div>
-        <div class="field">
-          <label class="label">Upload</label>
-          <div class="flex gap-2" style="flex-wrap:wrap;">
-            <input type="file" id="cf-file" accept="image/*,video/mp4" style="display:none;">
-            <button class="btn btn-outline btn-sm" type="button" id="cf-pick">
-              <i class="fas fa-upload" aria-hidden="true"></i> Choose file
-            </button>
-            <span class="muted" id="cf-file-name" style="align-self:center;font-size:.85rem;">No file selected</span>
-          </div>
-          <div class="hint">Images go to <code>content-images</code>, MP4 to <code>content-videos</code>. Prefer YouTube links for large videos.</div>
-        </div>
+
         <div class="field">
           <label class="label" for="cf-sort">Sort order</label>
           <input class="input" type="number" id="cf-sort" value="${esc(String(row.sort_order || 0))}" min="0">
           <div class="hint">Lower numbers appear first within their section.</div>
         </div>
+
         <div class="checkbox-row">
           <input type="checkbox" id="cf-active" ${row.active ? 'checked' : ''}>
           <label for="cf-active">Active (visible on site)</label>
         </div>
+
         <div class="flex gap-2 mt-2" style="justify-content:flex-end;">
           <button class="btn btn-ghost" type="button" id="cf-cancel">Cancel</button>
           <button class="btn btn-green" type="submit" id="cf-save">
@@ -562,57 +870,54 @@
 
     openModal();
 
-    let pickedFile = null;
-    on($('cf-pick'), 'click', () => $('cf-file').click());
-    on($('cf-file'), 'change', (e) => {
-      pickedFile = e.target.files[0] || null;
-      $('cf-file-name').textContent = pickedFile ? pickedFile.name : 'No file selected';
+    const dz = wireDropzone('cf-media');
+
+    on($('cf-url-toggle'), 'click', () => {
+      $('cf-url-field').classList.toggle('open');
     });
+    if (existingUrl && !/^https?:\/\/[^/]*\.(supabase|amazonaws)/i.test(existingUrl)) {
+      $('cf-url-field').classList.add('open');
+    }
+
     on($('cf-cancel'), 'click', closeModal);
+
     on($('content-form'), 'submit', async (e) => {
       e.preventDefault();
       const btn = $('cf-save');
+
       const payload = {
         section:    $('cf-section').value,
         title:      $('cf-title').value.trim() || null,
         body:       $('cf-body').value.trim() || null,
-        media_url:  $('cf-media-url').value.trim() || null,
+        media_url:  null,
         media_type: null,
         sort_order: Number($('cf-sort').value || 0),
         active:     $('cf-active').checked,
       };
 
-      // Infer media_type from URL or uploaded file.
-      if (pickedFile) {
-        try {
-          setLoading(btn, true, 'Uploading…');
-          if (pickedFile.type.startsWith('image/')) {
-            payload.media_url = await uploadContentImage(pickedFile);
-            payload.media_type = 'image';
-          } else if (pickedFile.type === 'video/mp4') {
-            payload.media_url = await uploadContentVideo(pickedFile);
-            payload.media_type = 'video';
-          } else {
-            throw new Error('Unsupported file type');
-          }
-        } catch (err) {
-          toast(err.message || 'Upload failed');
-          setLoading(btn, false);
-          return;
-        }
-      } else if (payload.media_url) {
-        if (/youtube\.com|youtu\.be/i.test(payload.media_url)) payload.media_type = 'video';
-        else if (/\.mp4(\?|$)/i.test(payload.media_url)) payload.media_type = 'video';
-        else payload.media_type = 'image';
-      }
-
       setLoading(btn, true, 'Saving…');
       try {
-        if (isNew) {
-          await db.insert('content', payload);
+        // Priority: pending upload > pasted URL.
+        if (dz.hasPending()) {
+          payload.media_url = await dz.commit();
+          payload.media_type = 'image';
         } else {
-          await db.update('content', { eq: { id: row.id } }, payload);
+          const pasted = ($('cf-media-url').value || '').trim();
+          if (pasted) {
+            payload.media_url = pasted;
+            if (/youtube\.com|youtu\.be/i.test(pasted)) payload.media_type = 'video';
+            else if (/\.mp4(\?|$)/i.test(pasted)) payload.media_type = 'video';
+            else payload.media_type = 'image';
+          } else if (row.media_url) {
+            // Preserve existing.
+            payload.media_url = row.media_url;
+            payload.media_type = row.media_type;
+          }
         }
+
+        if (isNew) await db.insert('content', payload);
+        else await db.update('content', { eq: { id: row.id } }, payload);
+
         toast('Saved');
         closeModal();
         await loadAll();
@@ -649,8 +954,6 @@
   }
 
   /* ─── LINKS ──────────────────────────────────────────────────────────── */
-  const DEFAULT_LINK_KEYS = ['whatsapp', 'group', 'email', 'phone', 'facebook', 'tiktok', 'instagram'];
-
   function renderLinks() {
     const wrap = $('links-list');
     if (!CACHED_LINKS.length) {
@@ -813,6 +1116,8 @@
   }
 
   /* ─── SETTINGS ───────────────────────────────────────────────────────── */
+  let LOGO_DZ = null;
+
   function renderSettings() {
     const s = CACHED_SETTINGS || {};
     const map = {
@@ -829,6 +1134,73 @@
     Object.entries(map).forEach(([id, val]) => {
       const el = $(id);
       if (el && val != null) el.value = val;
+    });
+
+    // Logo preview
+    const thumb = $('logo-thumb');
+    const clearBtn = $('set-logo-clear');
+    if (s.logo_url) {
+      thumb.innerHTML = `<img src="${esc(s.logo_url)}" alt="Logo">`;
+      if (clearBtn) clearBtn.style.display = '';
+    } else {
+      thumb.innerHTML = `<i class="fas fa-image" aria-hidden="true"></i>`;
+      if (clearBtn) clearBtn.style.display = 'none';
+    }
+
+    wireLogoUploader();
+  }
+
+  function wireLogoUploader() {
+    const file = $('set-logo-file');
+    const pick = $('set-logo-pick');
+    const clear = $('set-logo-clear');
+    const prog = $('set-logo-progress');
+    const bar = prog ? prog.querySelector('.bar') : null;
+    const status = $('set-logo-status');
+    const thumb = $('logo-thumb');
+
+    on(pick, 'click', () => file.click());
+
+    on(file, 'change', async (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      if (!f.type.startsWith('image/')) {
+        toast('Only image files are supported.');
+        return;
+      }
+      if (f.size > 8 * 1024 * 1024) {
+        toast('Image must be under 8 MB.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => { thumb.innerHTML = `<img src="${ev.target.result}" alt="Logo">`; };
+      reader.readAsDataURL(f);
+
+      prog.classList.add('active');
+      bar.style.width = '0%';
+      status.textContent = 'Uploading…';
+      try {
+        const url = await uploadContentImage(f, (pct) => {
+          bar.style.width = pct + '%';
+          status.textContent = `Uploading… ${pct}%`;
+        });
+        $('set-logo').value = url;
+        status.textContent = 'Uploaded ✓';
+        if (clear) clear.style.display = '';
+        setTimeout(() => prog.classList.remove('active'), 400);
+      } catch (err) {
+        toast(err.message || 'Upload failed');
+        status.textContent = '';
+        prog.classList.remove('active');
+      }
+    });
+
+    on(clear, 'click', () => {
+      $('set-logo').value = '';
+      thumb.innerHTML = `<i class="fas fa-image" aria-hidden="true"></i>`;
+      clear.style.display = 'none';
+      status.textContent = '';
+      file.value = '';
     });
   }
 
@@ -848,7 +1220,6 @@
     ];
     setLoading(btn, true, 'Saving…');
     try {
-      // Upsert each key. Try update first; if no rows, insert.
       for (const [key, value] of pairs) {
         const existing = await db.getOne('site_settings', { eq: { key } });
         if (existing) {
@@ -1068,7 +1439,6 @@
         db.query('form_submissions', { gt: { created_at: since }, limit: 10000, select: 'created_at' }),
       ]);
 
-      // Clicks by key
       const byKey = {};
       (clicks || []).forEach(c => {
         const k = c.link_key || 'unknown';
@@ -1094,7 +1464,6 @@
           </div>`;
       }
 
-      // Subs per day
       const perDay = {};
       for (let i = days - 1; i >= 0; i--) {
         const d = new Date(Date.now() - i * 24 * 3600 * 1000);

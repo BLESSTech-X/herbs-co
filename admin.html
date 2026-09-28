@@ -157,6 +157,23 @@
 }
 .logo-thumb img { width: 100%; height: 100%; object-fit: contain; }
 .logo-thumb i { color: var(--border); font-size: 1.3rem; }
+
+.title-hint {
+  background: #f7f5ec;
+  border-left: 3px solid var(--gold);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: .82rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+.title-hint strong { color: var(--green); }
+.title-hint code {
+  background: rgba(10,77,58,.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: .82rem;
+}
 </style>
 </head>
 <body>
@@ -298,7 +315,7 @@
           </div>
           <div class="field">
             <label class="label" for="set-hero">Hero headline</label>
-            <input class="input" type="text" id="set-hero" placeholder="Wellness that pays.">
+            <input class="input" type="text" id="set-hero" placeholder="Build a real business selling herbs and perfumes.">
           </div>
           <div class="field">
             <label class="label" for="set-hero-sub">Hero sub-headline</label>
@@ -347,7 +364,7 @@
       <div class="admin-hdr">
         <div>
           <h2>Submissions</h2>
-          <p class="muted" style="margin:0;font-size:.9rem;">Join requests and contact messages.</p>
+          <p class="muted" style="margin:0;font-size:.9rem;">Join requests, training leads, and contact messages.</p>
         </div>
         <div class="flex gap-2" style="flex-wrap:wrap;">
           <button class="btn btn-outline btn-sm" id="subs-export-csv" type="button">
@@ -366,6 +383,7 @@
         <select class="select" id="subs-filter-type" style="max-width:180px;">
           <option value="">All types</option>
           <option value="join">Join</option>
+          <option value="training_lead">Training lead</option>
           <option value="contact">Contact</option>
         </select>
         <select class="select" id="subs-filter-handled" style="max-width:180px;">
@@ -386,7 +404,7 @@
       <div class="admin-hdr">
         <div>
           <h2>Analytics</h2>
-          <p class="muted" style="margin:0;font-size:.9rem;">Last 30 days.</p>
+          <p class="muted" style="margin:0;font-size:.9rem;">Link clicks and form submissions.</p>
         </div>
         <div class="flex gap-2">
           <select class="select" id="ana-range" style="max-width:140px;">
@@ -438,9 +456,10 @@
     <div class="modal-body" id="modal-body"></div>
   </div>
 </div>
+
 <script>
 /* ============================================================================
-   admin.html — CMS controller (with upload-first media UX)
+   admin.html — CMS controller (upload-first media UX + new sections)
    ============================================================================ */
 (function () {
   'use strict';
@@ -561,13 +580,34 @@
   /* ─── CONTENT ────────────────────────────────────────────────────────── */
   const SECTION_LABELS = {
     hero:        'Hero',
+    team:        'Team Member',
     about:       'About',
-    video:       'Video',
+    video:       'Video (training)',
     image:       'Gallery Image',
-    product:     'Product',
-    step:        'Step',
+    opportunity: 'Opportunity Card',
+    audience:    'Audience Card',
+    flow:        'How-It-Works Step',
+    product:     'Product Category',
+    step:        'Join Step',
+    timeline:    '30-Day Timeline Item',
     testimonial: 'Testimonial',
     faq:         'FAQ',
+  };
+
+  const SECTION_TIPS = {
+    hero:        'Image only. Shows on the right side of the hero.',
+    team:        'Title: "Full Name | Role". Body: short bio. Media: square photo.',
+    about:       'Title: short heading. Body: multi-paragraph text.',
+    video:       'Media: paste a YouTube link (recommended). Title and body appear under the video.',
+    image:       'Media: square image for the gallery grid.',
+    opportunity: 'Title: stream name. Body: one sentence. Overrides the default two cards.',
+    audience:    'Title: persona headline. Body: one sentence. Overrides the default three cards.',
+    flow:        'Title: step heading. Body: one sentence. Overrides the default four steps.',
+    product:     'Title: category name. Body: one sentence. Media: optional image.',
+    step:        'Title: step heading. Body: one sentence. Appears in "How to join".',
+    timeline:    'Title: when (e.g. "Day 1", "Day 4–7"). Body: what happens. Overrides defaults.',
+    testimonial: 'Title: "Name | Role | Location". Body: the quote. Media: optional photo.',
+    faq:         'Title: the question. Body: the answer.',
   };
 
   function renderContent() {
@@ -593,6 +633,7 @@
         return `
           <div class="card mb-2">
             <h3 style="margin-top:0;">${esc(SECTION_LABELS[s] || s)} <span class="muted" style="font-weight:400;font-size:.85rem;">(${rows.length})</span></h3>
+            <p class="muted" style="margin:0 0 12px;font-size:.85rem;">${esc(SECTION_TIPS[s] || '')}</p>
             <div class="table-wrap">
               <table>
                 <thead><tr>
@@ -653,9 +694,7 @@
 
   on($('add-content-btn'), 'click', () => openContentModal(null));
 
-  /* ─── UPLOAD DROPZONE BUILDER ────────────────────────────────────────── */
-  // Returns HTML for a reusable dropzone block.
-  // inputId must be unique on the page.
+  /* ─── UPLOAD DROPZONE ────────────────────────────────────────────────── */
   function dropzoneHTML(inputId, existingUrl, existingType) {
     const hasMedia = !!existingUrl;
     const isImg = hasMedia && (existingType === 'image' || /\.(jpe?g|png|gif|webp|avif)(\?|$)/i.test(existingUrl));
@@ -674,8 +713,6 @@
     `;
   }
 
-  // Wires a dropzone so files dropped/selected update a hidden state and preview.
-  // Returns { getFile, getUrl, setUrl, clear } so the caller can read the result.
   function wireDropzone(inputId) {
     const dz = $(inputId + '-dz');
     const input = $(inputId);
@@ -771,8 +808,6 @@
         if (status) status.textContent = '';
         setPreview('', '');
       },
-      // Uploads pending file to Supabase and returns the public URL.
-      // If no pending file, returns currentUrl unchanged.
       async commit() {
         if (!currentFile) return currentUrl;
         if (uploading) throw new Error('Already uploading');
@@ -820,12 +855,20 @@
               `<option value="${esc(k)}" ${row.section === k ? 'selected' : ''}>${esc(v)}</option>`
             ).join('')}
           </select>
+          <div class="hint" id="cf-section-hint">${esc(SECTION_TIPS[row.section] || '')}</div>
         </div>
 
         <div class="field">
           <label class="label" for="cf-title">Title</label>
           <input class="input" type="text" id="cf-title" value="${esc(row.title || '')}">
-          <div class="hint" id="cf-title-hint">For testimonials use "Name | Role". For FAQ this is the question.</div>
+          <div class="title-hint" id="cf-title-hint">
+            <strong>Title format by section:</strong><br>
+            Team → <code>Full Name | Role</code> (e.g. <code>Bwalya M. | Founder</code>)<br>
+            Testimonial → <code>Name | Role | Location</code><br>
+            FAQ → the question itself<br>
+            Timeline → <code>Day 1</code>, <code>Day 4–7</code>, etc.<br>
+            Opportunity / Audience / Flow / Product → short heading
+          </div>
         </div>
 
         <div class="field">
@@ -872,6 +915,11 @@
 
     const dz = wireDropzone('cf-media');
 
+    on($('cf-section'), 'change', (e) => {
+      const hintEl = $('cf-section-hint');
+      if (hintEl) hintEl.textContent = SECTION_TIPS[e.target.value] || '';
+    });
+
     on($('cf-url-toggle'), 'click', () => {
       $('cf-url-field').classList.toggle('open');
     });
@@ -897,7 +945,6 @@
 
       setLoading(btn, true, 'Saving…');
       try {
-        // Priority: pending upload > pasted URL.
         if (dz.hasPending()) {
           payload.media_url = await dz.commit();
           payload.media_type = 'image';
@@ -909,7 +956,6 @@
             else if (/\.mp4(\?|$)/i.test(pasted)) payload.media_type = 'video';
             else payload.media_type = 'image';
           } else if (row.media_url) {
-            // Preserve existing.
             payload.media_url = row.media_url;
             payload.media_type = row.media_type;
           }
@@ -1116,8 +1162,6 @@
   }
 
   /* ─── SETTINGS ───────────────────────────────────────────────────────── */
-  let LOGO_DZ = null;
-
   function renderSettings() {
     const s = CACHED_SETTINGS || {};
     const map = {
@@ -1136,7 +1180,6 @@
       if (el && val != null) el.value = val;
     });
 
-    // Logo preview
     const thumb = $('logo-thumb');
     const clearBtn = $('set-logo-clear');
     if (s.logo_url) {
